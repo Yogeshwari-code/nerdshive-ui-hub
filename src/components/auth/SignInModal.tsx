@@ -37,26 +37,29 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, show error for unapproved users
-      if (email !== "admin@nerdshive.com") {
-        setError("Your registration is pending admin approval. You will be notified once approved.");
-        setIsLoading(false);
+      // Demo credentials
+      if (email === "admin@nerdshive.com" && password === "admin123") {
+        toast({
+          title: "Welcome Admin!",
+          description: "You have successfully signed in as admin.",
+        });
+        window.location.href = "/admin";
         return;
       }
-
-      // Simulate successful login for admin
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
-      });
-
-      // Redirect to appropriate dashboard
-      if (email === "admin@nerdshive.com") {
-        window.location.href = "/admin";
-      } else {
+      
+      if (email === "user@nerdshive.com" && password === "user123") {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully signed in.",
+        });
         window.location.href = "/dashboard";
+        return;
       }
       
+      // For any other credentials, show pending approval message
+      setError("Your registration is pending admin approval. You will be notified once approved.");
+      setIsLoading(false);
+      return;
     } catch (error) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -90,6 +93,15 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
             Sign in to access your Nerdshive dashboard
           </DialogDescription>
         </DialogHeader>
+
+        {/* Demo Credentials */}
+        <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 space-y-2 text-sm">
+          <p className="font-semibold text-accent">Demo Credentials:</p>
+          <div className="space-y-1">
+            <p><strong>Admin:</strong> admin@nerdshive.com / admin123</p>
+            <p><strong>User:</strong> user@nerdshive.com / user123</p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (

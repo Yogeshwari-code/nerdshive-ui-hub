@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    --background: 249 250 251;
-    --foreground: 222.2 84% 4.9%;
+    --background: 248 250 252;
+    --foreground: 51 65 85;
 
     --card: 255 255 255;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 51 65 85;
 
     --popover: 255 255 255;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 51 65 85;
 
     /* Primary brand colors - Blue/Purple gradient theme */
     --primary: 236 72% 61%;
@@ -21,11 +21,11 @@
     --primary-hover: 236 72% 55%;
     
     /* Secondary accent colors */
-    --secondary: 248 250 252;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 241 245 249;
+    --secondary-foreground: 51 65 85;
 
-    --muted: 248 250 252;
-    --muted-foreground: 100 7% 23%;
+    --muted: 241 245 249;
+    --muted-foreground: 100 109 125;
 
     --accent: 263 60% 65%;
     --accent-foreground: 255 255 255;
@@ -41,16 +41,16 @@
     --warning: 38 92% 50%;
     --warning-foreground: 255 255 255;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 226 31% 88%;
+    --input: 226 31% 88%;
     --ring: 236 72% 61%;
 
     --radius: 0.75rem;
 
     /* Nerdshive brand gradients */
     --gradient-primary: linear-gradient(135deg, hsl(236 72% 61%), hsl(263 60% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(248 250 252), hsl(255 255 255));
-    --gradient-hero: linear-gradient(135deg, hsl(236 72% 61% / 0.05), hsl(263 60% 65% / 0.05));
+    --gradient-secondary: linear-gradient(135deg, hsl(241 245 249), hsl(255 255 255));
+    --gradient-hero: linear-gradient(135deg, hsl(241 245 249), hsl(248 250 252));
     
     /* Soft shadows for depth */
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
@@ -64,12 +64,12 @@
 
     /* Sidebar colors */
     --sidebar-background: 255 255 255;
-    --sidebar-foreground: 100 7% 23%;
+    --sidebar-foreground: 51 65 85;
     --sidebar-primary: 236 72% 61%;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 248 250 252;
-    --sidebar-accent-foreground: 100 7% 23%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 241 245 249;
+    --sidebar-accent-foreground: 51 65 85;
+    --sidebar-border: 226 31% 88%;
     --sidebar-ring: 236 72% 61%;
   }
 
@@ -224,4 +224,20 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Logo slide-in animation */
+.animate-logo-slide {
+  animation: slide-in-from-left 1s ease-out;
 }

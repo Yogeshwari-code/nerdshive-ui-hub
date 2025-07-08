@@ -51,7 +51,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-hero">
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-        <div className="animate-fade-in mb-8">
+        <div className="animate-logo-slide mb-8">
           <img 
             src="/lovable-uploads/10dc8619-d90d-44d5-a68f-7022b5696552.png" 
             alt="Nerdshive Logo" 
