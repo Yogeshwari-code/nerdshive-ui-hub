@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { 
   UserCheck, 
@@ -19,7 +22,8 @@ import {
   Search,
   Trash2,
   Plus,
-  Settings
+  Settings,
+  LogOut
 } from "lucide-react";
 
 // Mock data
@@ -91,6 +95,7 @@ const mockQueries = [
 ];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [pendingUsers, setPendingUsers] = useState(mockPendingUsers);
   const [approvedUsers, setApprovedUsers] = useState(mockApprovedUsers);
   const [queries, setQueries] = useState(mockQueries);
@@ -117,6 +122,24 @@ For any assistance, contact the front desk.`
   const [newRule, setNewRule] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
+
+  const handleLogout = () => {
+    navigate("/");
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+  };
+
+  const handleManageUser = (userId: number, newStatus: string) => {
+    setApprovedUsers(prev => prev.map(user => 
+      user.id === userId ? { ...user, status: newStatus } : user
+    ));
+    toast({
+      title: "User Updated",
+      description: "User status has been updated successfully.",
+    });
+  };
 
   const handleApproveUser = (userId: number) => {
     const user = pendingUsers.find(u => u.id === userId);
@@ -198,9 +221,19 @@ For any assistance, contact the front desk.`
     <div className="min-h-screen bg-gradient-hero p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage users, approvals, and coworking space operations</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage users, approvals, and coworking space operations</p>
+          </div>
+          <Button 
+            onClick={handleLogout}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-6">
@@ -353,10 +386,54 @@ For any assistance, contact the front desk.`
                             </span>
                           </div>
                         </div>
-                        <Button variant="outline" size="sm">
-                          <Settings className="h-4 w-4 mr-1" />
-                          Manage
-                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Settings className="h-4 w-4 mr-1" />
+                              Manage
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Manage User: {user.fullName}</DialogTitle>
+                              <DialogDescription>
+                                Update user status and plan details
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <span className="font-medium">Email:</span> {user.email}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Plan:</span> {user.planType}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Joined:</span> {user.joinedAt}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Current Status:</span> {user.status}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Update Status</Label>
+                                <Select 
+                                  defaultValue={user.status}
+                                  onValueChange={(value) => handleManageUser(user.id, value)}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Active">Active</SelectItem>
+                                    <SelectItem value="Inactive">Inactive</SelectItem>
+                                    <SelectItem value="Suspended">Suspended</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </Card>
                   ))}
