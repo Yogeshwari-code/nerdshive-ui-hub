@@ -57,12 +57,12 @@ const Index = () => {
             alt="Nerdshive Logo" 
             className="h-24 w-auto mx-auto mb-8"
           />
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 text-elegant">
             Smart coworking for{" "}
             <span className="text-gradient">creators</span> and{" "}
             <span className="text-gradient">professionals</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
             Join a vibrant community of innovators, entrepreneurs, and creative professionals 
             in our modern coworking space designed for productivity and collaboration.
           </p>
@@ -92,10 +92,10 @@ const Index = () => {
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-4xl font-bold text-foreground mb-4 text-elegant">
               Why Choose Nerdshive?
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               We provide everything you need to focus on what matters most - your work and growth.
             </p>
           </div>
@@ -106,14 +106,14 @@ const Index = () => {
               return (
                 <Card 
                   key={index} 
-                  className="hover-lift animate-scale-in bg-card/80 backdrop-blur-sm border-0 shadow-soft"
+                  className="hover-lift animate-scale-in glass-effect border-0 shadow-soft"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4">
-                      <Icon className="h-6 w-6 text-white" />
+                    <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4">
+                      <Icon className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <CardTitle className="text-xl font-semibold">{feature.title}</CardTitle>
+                    <CardTitle className="text-xl font-semibold text-elegant">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription className="text-base leading-relaxed">

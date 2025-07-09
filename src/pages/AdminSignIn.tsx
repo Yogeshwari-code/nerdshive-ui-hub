@@ -67,13 +67,13 @@ const AdminSignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl bg-white/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-2xl glass-effect">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-600 rounded-full flex items-center justify-center">
-            <Lock className="h-8 w-8 text-white" />
+          <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+            <Lock className="h-8 w-8 text-primary-foreground" />
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold text-gradient text-elegant">
             Admin Portal
           </CardTitle>
           <CardDescription className="text-lg">
@@ -83,8 +83,8 @@ const AdminSignIn = () => {
 
         <CardContent className="space-y-6">
           {/* Demo Credentials */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-2 text-sm">
-            <p className="font-semibold text-amber-800">Demo Admin Credentials:</p>
+          <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 space-y-2 text-sm">
+            <p className="font-semibold text-warning">Demo Admin Credentials:</p>
             <p><strong>Email:</strong> admin@nerdshive.com</p>
             <p><strong>Password:</strong> admin123</p>
             <p><strong>2FA Code:</strong> 123456</p>
@@ -141,7 +141,7 @@ const AdminSignIn = () => {
             {showTwoFA && (
               <div className="space-y-2">
                 <Label htmlFor="twofa" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-purple-600" />
+                  <Shield className="h-4 w-4 text-primary" />
                   Two-Factor Authentication Code
                 </Label>
                 <Input
@@ -162,7 +162,8 @@ const AdminSignIn = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700" 
+              className="w-full" 
+              variant="gradient"
               size="lg"
               disabled={isLoading}
             >
@@ -175,7 +176,7 @@ const AdminSignIn = () => {
               Not an admin?{" "}
               <Button
                 variant="link"
-                className="p-0 h-auto font-semibold text-purple-600"
+                className="p-0 h-auto font-semibold text-primary"
                 onClick={() => window.location.href = "/"}
               >
                 Go to User Portal

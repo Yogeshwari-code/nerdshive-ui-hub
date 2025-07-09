@@ -286,7 +286,7 @@ const AdminDashboard = () => {
         {/* Enhanced Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="space-y-2">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold text-gradient text-elegant">
               Welcome back, Admin! 🔐
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -296,7 +296,7 @@ const AdminDashboard = () => {
           <Button 
             onClick={handleLogout}
             variant="outline" 
-            className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl transition-all"
           >
             <LogOut className="h-5 w-5" />
             Logout
@@ -304,38 +304,38 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="payment-verification" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 bg-white/70 backdrop-blur-sm p-2 rounded-2xl shadow-lg">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 glass-effect p-2 rounded-2xl shadow-lg">
             <TabsTrigger 
               value="payment-verification" 
-              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <CreditCard className="h-4 w-4" />
               <span className="hidden sm:inline">Payment Verification</span>
             </TabsTrigger>
             <TabsTrigger 
               value="join-requests" 
-              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-teal-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
             >
               <UserPlus className="h-4 w-4" />
               <span className="hidden sm:inline">Join Requests</span>
             </TabsTrigger>
             <TabsTrigger 
               value="content" 
-              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Edit className="h-4 w-4" />
               <span className="hidden sm:inline">Content</span>
             </TabsTrigger>
             <TabsTrigger 
               value="approved-users" 
-              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
             >
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Approved Users</span>
             </TabsTrigger>
             <TabsTrigger 
               value="queries" 
-              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">Queries</span>
@@ -344,28 +344,28 @@ const AdminDashboard = () => {
 
           {/* Payment Verification Tab */}
           <TabsContent value="payment-verification">
-            <Card className="shadow-xl bg-gradient-to-br from-white to-blue-50 border-blue-200">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg">
+            <Card className="shadow-xl glass-effect">
+              <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
                 <CardTitle className="flex items-center gap-3 text-xl">
                   <CreditCard className="h-6 w-6" />
                   Payment Verification Center 💳
                 </CardTitle>
-                <CardDescription className="text-blue-100">
+                <CardDescription className="text-primary-foreground/80">
                   You've got {payments.length} payments waiting for verification! Let's check them out 🧐
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 {payments.length === 0 ? (
-                  <Alert className="bg-green-50 border-green-200">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
+                  <Alert className="bg-success/10 border-success/20">
+                    <CheckCircle className="h-4 w-4 text-success" />
+                    <AlertDescription className="text-success">
                       🎉 All caught up! No pending payments at the moment.
                     </AlertDescription>
                   </Alert>
                 ) : (
                   <div className="space-y-6">
                     {payments.map((payment) => (
-                      <Card key={payment.id} className="p-6 border-l-4 border-l-blue-500 shadow-md hover:shadow-lg transition-shadow bg-white">
+                      <Card key={payment.id} className="p-6 border-l-4 border-l-primary shadow-md hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start">
                           <div className="space-y-4 flex-1">
                             <div className="flex items-center gap-3">

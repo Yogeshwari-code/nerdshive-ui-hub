@@ -221,7 +221,7 @@ const UserDashboard = () => {
               className="w-16 h-16 animate-bounce"
             />
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2">Welcome to Nerdshive, Arjun Singh! 😊</h1>
+              <h1 className="text-4xl font-bold text-foreground mb-2 text-elegant">Welcome to Nerdshive, Arjun Singh! 😊</h1>
               <p className="text-muted-foreground">We're glad to have you here. Let's make your coworking experience amazing!</p>
             </div>
           </div>
@@ -277,17 +277,17 @@ const UserDashboard = () => {
                           selectedPlan === plan.id 
                             ? 'ring-2 ring-primary shadow-glow' 
                             : 'hover:shadow-lift'
-                        } ${plan.popular ? 'border-primary' : ''}`}
+                        } ${plan.popular ? 'border-accent' : ''}`}
                         onClick={() => handlePlanSelection(plan.id)}
                       >
                         {plan.popular && (
                           <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                            <Badge className="bg-gradient-primary">⭐ Most Popular</Badge>
+                            <Badge className="bg-accent text-accent-foreground">⭐ Most Popular</Badge>
                           </div>
                         )}
                         
                         <CardHeader className="text-center">
-                          <CardTitle className="text-xl">{plan.name}</CardTitle>
+                          <CardTitle className="text-xl text-elegant">{plan.name}</CardTitle>
                           <div className="space-y-1">
                             <div className="text-3xl font-bold text-primary">{plan.price}</div>
                             <div className="text-sm text-muted-foreground">{plan.period}</div>
@@ -317,27 +317,27 @@ const UserDashboard = () => {
                   </div>
 
                   {/* UPI Payment Info */}
-                  <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+                  <Card className="bg-success/5 border-success/20">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-3 text-green-800">
+                      <CardTitle className="flex items-center gap-3 text-success text-elegant">
                         <QrCode className="h-6 w-6" />
                         Payment Information 💳
                       </CardTitle>
-                      <CardDescription className="text-green-700">
+                      <CardDescription className="text-success/80">
                         Use this UPI ID to make your payment
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-green-700 font-medium">UPI ID for payments:</p>
-                          <p className="text-xl font-bold text-green-800">{UPI_ID}</p>
+                          <p className="text-sm text-success/80 font-medium">UPI ID for payments:</p>
+                          <p className="text-xl font-bold text-success">{UPI_ID}</p>
                         </div>
                         <Button 
                           onClick={copyUpiId}
                           variant="outline"
                           size="sm"
-                          className="bg-white hover:bg-green-50 border-green-300"
+                          className="border-success/30 hover:bg-success/10"
                         >
                           <Copy className="h-4 w-4 mr-2" />
                           Copy UPI ID
@@ -348,10 +348,10 @@ const UserDashboard = () => {
 
                   {/* Payment Upload Section */}
                   {selectedPlan && (
-                    <Card className="border-2 border-primary/20 bg-primary/5">
+                    <Card className="border-2 border-accent/20 bg-accent/5">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                          <Upload className="h-5 w-5 text-primary" />
+                          <Upload className="h-5 w-5 text-accent" />
                           Upload Payment Details 💳
                         </CardTitle>
                         <CardDescription>

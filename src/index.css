@@ -2,61 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Nerdshive Design System - Modern tech aesthetic with blue/purple accents */
+/* Nerdshive Design System - Subtle & Elegant */
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 27%;
+    /* Neutral base colors - warm and sophisticated */
+    --background: 0 0% 99%;
+    --foreground: 220 13% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card-foreground: 220 13% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover-foreground: 220 13% 18%;
 
-    /* Primary brand colors - Blue/Purple gradient theme */
-    --primary: 236 72% 61%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 236 72% 55%;
+    /* Primary brand colors - sophisticated blue-gray */
+    --primary: 215 25% 27%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 215 25% 32%;
     
-    /* Secondary accent colors */
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 215 25% 27%;
+    /* Secondary colors - warm neutral */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 13% 18%;
 
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 263 60% 65%;
-    --accent-foreground: 0 0% 100%;
-    --accent-hover: 263 60% 58%;
+    /* Accent colors - subtle teal */
+    --accent: 185 25% 45%;
+    --accent-foreground: 0 0% 98%;
+    --accent-hover: 185 25% 40%;
 
-    /* Semantic colors */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    /* Semantic colors - muted and professional */
+    --destructive: 0 65% 51%;
+    --destructive-foreground: 0 0% 98%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+    --success: 142 69% 35%;
+    --success-foreground: 0 0% 98%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 38 85% 48%;
+    --warning-foreground: 0 0% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 236 72% 61%;
+    /* Borders and inputs - very subtle */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 215 25% 27%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Nerdshive brand gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(236 72% 61%), hsl(263 60% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(214 32% 91%), hsl(0 0% 100%));
-    --gradient-hero: linear-gradient(135deg, hsl(210 20% 98%), hsl(214 32% 91%));
+    /* Elegant gradients - very subtle */
+    --gradient-primary: linear-gradient(135deg, hsl(215 25% 27%), hsl(185 25% 45%));
+    --gradient-secondary: linear-gradient(135deg, hsl(220 14% 96%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 99%), hsl(220 14% 96%));
     
-    /* Soft shadows for depth */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.06);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05);
-    --shadow-glow: 0 0 0 1px hsl(236 72% 61% / 0.1), 0 0 20px hsl(236 72% 61% / 0.1);
+    /* Refined shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(220 13% 18% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(220 13% 18% / 0.07), 0 2px 4px -1px hsl(220 13% 18% / 0.04);
+    --shadow-lg: 0 10px 15px -3px hsl(220 13% 18% / 0.08), 0 4px 6px -2px hsl(220 13% 18% / 0.05);
+    --shadow-glow: 0 0 0 1px hsl(215 25% 27% / 0.08), 0 0 20px hsl(215 25% 27% / 0.06);
 
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -64,58 +67,59 @@
 
     /* Sidebar colors */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 215 25% 27%;
-    --sidebar-primary: 236 72% 61%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 32% 91%;
-    --sidebar-accent-foreground: 215 25% 27%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 236 72% 61%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 215 25% 27%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 13% 18%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 215 25% 27%;
   }
 
   .dark {
-    --background: 222 84% 5%;
-    --foreground: 210 20% 98%;
+    /* Dark mode - sophisticated and elegant */
+    --background: 220 13% 9%;
+    --foreground: 220 14% 96%;
 
-    --card: 222 84% 5%;
-    --card-foreground: 210 20% 98%;
+    --card: 220 13% 9%;
+    --card-foreground: 220 14% 96%;
 
-    --popover: 222 84% 5%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 220 13% 9%;
+    --popover-foreground: 220 14% 96%;
 
-    --primary: 236 72% 61%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 236 72% 68%;
+    --primary: 185 25% 45%;
+    --primary-foreground: 220 13% 9%;
+    --primary-hover: 185 25% 50%;
 
-    --secondary: 217 33% 18%;
-    --secondary-foreground: 210 20% 98%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 14% 96%;
 
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 65%;
 
-    --accent: 263 60% 65%;
-    --accent-foreground: 0 0% 100%;
-    --accent-hover: 263 60% 72%;
+    --accent: 185 25% 45%;
+    --accent-foreground: 220 13% 9%;
+    --accent-hover: 185 25% 50%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive: 0 65% 51%;
+    --destructive-foreground: 220 14% 96%;
 
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 236 72% 61%;
+    --border: 220 13% 15%;
+    --input: 220 13% 15%;
+    --ring: 185 25% 45%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(236 72% 61%), hsl(263 60% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(217 33% 18%), hsl(222 84% 5%));
-    --gradient-hero: linear-gradient(135deg, hsl(236 72% 61% / 0.1), hsl(263 60% 65% / 0.1));
+    --gradient-primary: linear-gradient(135deg, hsl(185 25% 45%), hsl(215 25% 27%));
+    --gradient-secondary: linear-gradient(135deg, hsl(220 13% 15%), hsl(220 13% 9%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 13% 9%), hsl(220 13% 15%));
 
-    --sidebar-background: 240 6% 10%;
-    --sidebar-foreground: 240 5% 96%;
-    --sidebar-primary: 236 72% 61%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 240 5% 96%;
-    --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 236 72% 61%;
+    --sidebar-background: 220 13% 12%;
+    --sidebar-foreground: 220 14% 96%;
+    --sidebar-primary: 185 25% 45%;
+    --sidebar-primary-foreground: 220 13% 9%;
+    --sidebar-accent: 220 13% 18%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 13% 18%;
+    --sidebar-ring: 185 25% 45%;
   }
 }
 
@@ -127,11 +131,12 @@
   body {
     @apply bg-background text-foreground;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
-  /* Nerdshive custom component styles */
+  /* Elegant component styles */
   .hero-gradient {
     background: var(--gradient-hero);
   }
@@ -160,27 +165,39 @@
     transition: var(--transition-fast);
   }
 
-  /* Custom animations for Nerdshive */
+  /* Refined animations */
   .animate-fade-in {
-    animation: fade-in 0.6s ease-out;
+    animation: fade-in 0.8s ease-out;
   }
   
   .animate-slide-up {
-    animation: slide-up 0.5s ease-out;
+    animation: slide-up 0.6s ease-out;
   }
   
   .animate-scale-in {
-    animation: scale-in 0.4s ease-out;
+    animation: scale-in 0.5s ease-out;
   }
 
-  /* Hover effects */
+  /* Subtle hover effects */
   .hover-lift {
     @apply transition-smooth;
   }
   
   .hover-lift:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
+  }
+
+  /* Elegant glass effect */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass-effect {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -191,12 +208,17 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  .text-elegant {
+    letter-spacing: -0.025em;
+    font-weight: 500;
+  }
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -207,7 +229,7 @@
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -218,7 +240,7 @@
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
@@ -229,7 +251,7 @@
 @keyframes slide-in-from-left {
   from {
     opacity: 0;
-    transform: translateX(-100px);
+    transform: translateX(-50px);
   }
   to {
     opacity: 1;
@@ -239,5 +261,29 @@
 
 /* Logo slide-in animation */
 .animate-logo-slide {
-  animation: slide-in-from-left 1s ease-out;
+  animation: slide-in-from-left 1.2s ease-out;
+}
+
+/* Elegant focus styles */
+.focus-elegant:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+}
+
+/* Refined scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
 }
