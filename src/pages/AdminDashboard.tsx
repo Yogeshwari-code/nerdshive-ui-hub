@@ -5,32 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Users, 
-  UserCheck, 
-  UserX, 
+  CreditCard,
+  UserPlus,
   MessageSquare, 
-  FileText, 
-  Activity,
-  Wifi,
-  Coffee,
   Edit,
   LogOut,
-  Clock,
   CheckCircle,
   AlertTriangle,
   Send,
   Eye,
-  CreditCard,
-  Settings
+  Activity,
+  X,
+  Copy,
+  QrCode
 } from "lucide-react";
 
-// Mock data for pending requests
-const mockRequests = [
+// Mock data for payment verification
+const mockPayments = [
   {
     id: 1,
     name: "Rahul Kumar",
@@ -38,7 +32,7 @@ const mockRequests = [
     plan: "Weekly",
     amount: "₹1,400",
     transactionId: "TXN123456789",
-    paymentScreenshot: "payment_proof_1.jpg",
+    paymentScreenshot: "/lovable-uploads/10dc8619-d90d-44d5-a68f-7022b5696552.png",
     submittedAt: "2024-01-20",
     status: "pending"
   },
@@ -49,7 +43,7 @@ const mockRequests = [
     plan: "Monthly",
     amount: "₹4,600",
     transactionId: "TXN987654321",
-    paymentScreenshot: "payment_proof_2.jpg",
+    paymentScreenshot: "/lovable-uploads/10dc8619-d90d-44d5-a68f-7022b5696552.png",
     submittedAt: "2024-01-19",
     status: "pending"
   },
@@ -60,31 +54,33 @@ const mockRequests = [
     plan: "Daily",
     amount: "₹299",
     transactionId: "TXN456789123",
-    paymentScreenshot: "payment_proof_3.jpg",
+    paymentScreenshot: "/lovable-uploads/10dc8619-d90d-44d5-a68f-7022b5696552.png",
     submittedAt: "2024-01-18",
     status: "pending"
   }
 ];
 
-// Mock data for all users
-const mockUsers = [
+// Mock data for join requests
+const mockJoinRequests = [
   {
     id: 1,
-    name: "John Doe",
-    email: "john@email.com",
-    plan: "Monthly",
-    status: "active",
-    joinedAt: "2024-01-01",
-    lastSeen: "2024-01-20"
+    name: "Neha Gupta",
+    email: "neha.gupta@email.com",
+    phone: "+91 9876543210",
+    profession: "Software Developer",
+    reason: "Need a quiet workspace for coding and meetings",
+    submittedAt: "2024-01-21",
+    status: "pending"
   },
   {
     id: 2,
-    name: "Sarah Wilson",
-    email: "sarah@email.com",
-    plan: "Weekly",
-    status: "active",
-    joinedAt: "2024-01-15",
-    lastSeen: "2024-01-19"
+    name: "Vikram Patel",
+    email: "vikram.p@email.com",
+    phone: "+91 8765432109",
+    profession: "Digital Marketer",
+    reason: "Looking for a collaborative environment to work with other professionals",
+    submittedAt: "2024-01-20",
+    status: "pending"
   }
 ];
 
@@ -150,47 +146,57 @@ Password: Member@2024 (For monthly members only)
 };
 
 const AdminDashboard = () => {
-  const [requests, setRequests] = useState(mockRequests);
-  const [users, setUsers] = useState(mockUsers);
+  const [payments, setPayments] = useState(mockPayments);
+  const [joinRequests, setJoinRequests] = useState(mockJoinRequests);
   const [queries, setQueries] = useState(mockQueries);
   const [content, setContent] = useState(editableContent);
   const [editingContent, setEditingContent] = useState({ type: "", value: "", open: false });
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedPayment, setSelectedPayment] = useState<any>(null);
   const [queryResponse, setQueryResponse] = useState("");
   const { toast } = useToast();
 
-  const handleApproveUser = (requestId: number) => {
-    const request = requests.find(r => r.id === requestId);
-    if (request) {
-      // Add to users list
-      const newUser = {
-        id: users.length + 1,
-        name: request.name,
-        email: request.email,
-        plan: request.plan,
-        status: "active",
-        joinedAt: new Date().toISOString().split('T')[0],
-        lastSeen: new Date().toISOString().split('T')[0]
-      };
-      setUsers(prev => [...prev, newUser]);
-      
-      // Remove from requests
-      setRequests(prev => prev.filter(r => r.id !== requestId));
+  const UPI_ID = "nerdshive@paytm";
+
+  const handleApprovePayment = (paymentId: number) => {
+    const payment = payments.find(p => p.id === paymentId);
+    if (payment) {
+      setPayments(prev => prev.filter(p => p.id !== paymentId));
       
       toast({
-        title: "User Approved! ✅",
-        description: `${request.name} has been approved and can now access the workspace.`,
+        title: "Payment Verified! ✅",
+        description: `${payment.name}'s payment has been verified and they can now access the workspace.`,
       });
     }
   };
 
-  const handleDeclineUser = (requestId: number) => {
-    const request = requests.find(r => r.id === requestId);
-    setRequests(prev => prev.filter(r => r.id !== requestId));
+  const handleDeclinePayment = (paymentId: number) => {
+    const payment = payments.find(p => p.id === paymentId);
+    setPayments(prev => prev.filter(p => p.id !== paymentId));
     
     toast({
-      title: "Request Declined",
-      description: `${request?.name}'s request has been declined.`,
+      title: "Payment Declined 🚫",
+      description: `${payment?.name}'s payment has been declined.`,
+      variant: "destructive"
+    });
+  };
+
+  const handleApproveJoinRequest = (requestId: number) => {
+    const request = joinRequests.find(r => r.id === requestId);
+    setJoinRequests(prev => prev.filter(r => r.id !== requestId));
+    
+    toast({
+      title: "Join Request Approved! ✅",
+      description: `${request?.name} has been approved to join Nerdshive.`,
+    });
+  };
+
+  const handleDeclineJoinRequest = (requestId: number) => {
+    const request = joinRequests.find(r => r.id === requestId);
+    setJoinRequests(prev => prev.filter(r => r.id !== requestId));
+    
+    toast({
+      title: "Join Request Declined 🚫",
+      description: `${request?.name}'s join request has been declined.`,
       variant: "destructive"
     });
   };
@@ -232,118 +238,186 @@ const AdminDashboard = () => {
     });
   };
 
+  const copyUpiId = () => {
+    navigator.clipboard.writeText(UPI_ID);
+    toast({
+      title: "UPI ID Copied! 📋",
+      description: "UPI ID has been copied to clipboard.",
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-hero p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Enhanced Header */}
         <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Welcome back, Admin! 🔐</h1>
-            <p className="text-muted-foreground">Your security is our top priority. Let's manage Nerdshive together!</p>
+          <div className="space-y-2">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Welcome back, Admin! 🔐
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Your security is our top priority. Let's manage Nerdshive beautifully! ✨
+            </p>
           </div>
           <Button 
             onClick={handleLogout}
             variant="outline" 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-5 w-5" />
             Logout
           </Button>
         </div>
 
-        <Tabs defaultValue="requests" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1">
-            <TabsTrigger value="requests" className="flex items-center gap-2 text-xs">
-              <UserCheck className="h-4 w-4" />
-              <span className="hidden sm:inline">Requests</span>
+        {/* UPI Payment Info Card */}
+        <Card className="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-green-800">
+              <QrCode className="h-6 w-6" />
+              Payment Information 💳
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-700 font-medium">UPI ID for payments:</p>
+                <p className="text-xl font-bold text-green-800">{UPI_ID}</p>
+              </div>
+              <Button 
+                onClick={copyUpiId}
+                variant="outline"
+                size="sm"
+                className="bg-white hover:bg-green-50 border-green-300"
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy UPI ID
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Tabs defaultValue="payment-verification" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 bg-white/70 backdrop-blur-sm p-2 rounded-2xl shadow-lg">
+            <TabsTrigger 
+              value="payment-verification" 
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white"
+            >
+              <CreditCard className="h-4 w-4" />
+              <span className="hidden sm:inline">Payment Verification</span>
             </TabsTrigger>
-            <TabsTrigger value="customers" className="flex items-center gap-2 text-xs">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Customers</span>
+            <TabsTrigger 
+              value="join-requests" 
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-teal-500 data-[state=active]:text-white"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span className="hidden sm:inline">Join Requests</span>
             </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2 text-xs">
+            <TabsTrigger 
+              value="content" 
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white"
+            >
               <Edit className="h-4 w-4" />
               <span className="hidden sm:inline">Content</span>
             </TabsTrigger>
-            <TabsTrigger value="queries" className="flex items-center gap-2 text-xs">
+            <TabsTrigger 
+              value="queries" 
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-500 data-[state=active]:text-white"
+            >
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">Queries</span>
             </TabsTrigger>
-            <TabsTrigger value="logs" className="flex items-center gap-2 text-xs">
-              <Activity className="h-4 w-4" />
-              <span className="hidden sm:inline">Logs</span>
-            </TabsTrigger>
           </TabsList>
 
-          {/* Requests Tab */}
-          <TabsContent value="requests">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UserCheck className="h-5 w-5 text-primary" />
-                  Pending User Requests 📋
+          {/* Payment Verification Tab */}
+          <TabsContent value="payment-verification">
+            <Card className="shadow-xl bg-gradient-to-br from-white to-blue-50 border-blue-200">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <CreditCard className="h-6 w-6" />
+                  Payment Verification Center 💳
                 </CardTitle>
-                <CardDescription>
-                  You've got {requests.length} new user requests today! Let's take a look and verify their plans 🧐
+                <CardDescription className="text-blue-100">
+                  You've got {payments.length} payments waiting for verification! Let's check them out 🧐
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                {requests.length === 0 ? (
-                  <Alert>
-                    <CheckCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      🎉 All caught up! No pending requests at the moment.
+              <CardContent className="p-6">
+                {payments.length === 0 ? (
+                  <Alert className="bg-green-50 border-green-200">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <AlertDescription className="text-green-800">
+                      🎉 All caught up! No pending payments at the moment.
                     </AlertDescription>
                   </Alert>
                 ) : (
-                  <div className="space-y-4">
-                    {requests.map((request) => (
-                      <Card key={request.id} className="p-4 border-l-4 border-l-primary">
+                  <div className="space-y-6">
+                    {payments.map((payment) => (
+                      <Card key={payment.id} className="p-6 border-l-4 border-l-blue-500 shadow-md hover:shadow-lg transition-shadow bg-white">
                         <div className="flex justify-between items-start">
-                          <div className="space-y-2 flex-1">
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-semibold">{request.name}</h3>
-                              <Badge variant="outline">{request.plan} Plan</Badge>
+                          <div className="space-y-4 flex-1">
+                            <div className="flex items-center gap-3">
+                              <h3 className="font-bold text-lg text-gray-800">{payment.name}</h3>
+                              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                                {payment.plan} Plan
+                              </Badge>
                             </div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <p><strong>Email:</strong> {request.email}</p>
-                                <p><strong>Amount:</strong> {request.amount}</p>
-                                <p><strong>Submitted:</strong> {request.submittedAt}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                              <div className="space-y-2">
+                                <p><strong className="text-gray-700">Email:</strong> <span className="text-blue-600">{payment.email}</span></p>
+                                <p><strong className="text-gray-700">Amount:</strong> <span className="text-green-600 font-semibold">{payment.amount}</span></p>
+                                <p><strong className="text-gray-700">Submitted:</strong> {payment.submittedAt}</p>
                               </div>
-                              <div>
-                                <p><strong>Transaction ID:</strong> {request.transactionId}</p>
-                                <p><strong>Payment Screenshot:</strong> {request.paymentScreenshot}</p>
+                              <div className="space-y-2">
+                                <p><strong className="text-gray-700">Transaction ID:</strong> <span className="font-mono text-purple-600">{payment.transactionId}</span></p>
                               </div>
                             </div>
                           </div>
                           
-                          <div className="flex gap-2 ml-4">
+                          <div className="flex gap-3 ml-6">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border-blue-300"
+                                  onClick={() => setSelectedPayment(payment)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  View Screenshot
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                  <DialogTitle>Payment Screenshot - {payment.name}</DialogTitle>
+                                  <DialogDescription>
+                                    Transaction ID: {payment.transactionId}
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex justify-center p-4">
+                                  <img 
+                                    src={payment.paymentScreenshot} 
+                                    alt="Payment screenshot" 
+                                    className="max-w-full max-h-96 rounded-lg shadow-lg"
+                                  />
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                             <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="flex items-center gap-1"
-                            >
-                              <Eye className="h-3 w-3" />
-                              View
-                            </Button>
-                            <Button 
-                              onClick={() => handleApproveUser(request.id)}
+                              onClick={() => handleApprovePayment(payment.id)}
                               variant="default" 
                               size="sm"
-                              className="flex items-center gap-1"
+                              className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
                             >
-                              <CheckCircle className="h-3 w-3" />
+                              <CheckCircle className="h-4 w-4" />
                               Approve
                             </Button>
                             <Button 
-                              onClick={() => handleDeclineUser(request.id)}
+                              onClick={() => handleDeclinePayment(payment.id)}
                               variant="destructive" 
                               size="sm"
-                              className="flex items-center gap-1"
+                              className="flex items-center gap-2"
                             >
-                              <UserX className="h-3 w-3" />
+                              <X className="h-4 w-4" />
                               Decline
                             </Button>
                           </div>
@@ -356,43 +430,75 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
-          {/* Customer Management Tab */}
-          <TabsContent value="customers">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
-                  Customer Management 👥
+          {/* Join Requests Tab */}
+          <TabsContent value="join-requests">
+            <Card className="shadow-xl bg-gradient-to-br from-white to-green-50 border-green-200">
+              <CardHeader className="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <UserPlus className="h-6 w-6" />
+                  Join Requests 🚀
                 </CardTitle>
-                <CardDescription>
-                  View and manage all user profiles and memberships
+                <CardDescription className="text-green-100">
+                  {joinRequests.length} people want to join our amazing community! 🌟
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {users.map((user) => (
-                    <Card key={user.id} className="p-4">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <h3 className="font-semibold">{user.name}</h3>
-                            <p className="text-sm text-muted-foreground">{user.email}</p>
+              <CardContent className="p-6">
+                {joinRequests.length === 0 ? (
+                  <Alert className="bg-green-50 border-green-200">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <AlertDescription className="text-green-800">
+                      🎉 All join requests have been processed!
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="space-y-6">
+                    {joinRequests.map((request) => (
+                      <Card key={request.id} className="p-6 border-l-4 border-l-green-500 shadow-md hover:shadow-lg transition-shadow bg-white">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-4 flex-1">
+                            <div className="flex items-center gap-3">
+                              <h3 className="font-bold text-lg text-gray-800">{request.name}</h3>
+                              <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+                                {request.profession}
+                              </Badge>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <p><strong className="text-gray-700">Email:</strong> <span className="text-blue-600">{request.email}</span></p>
+                              <p><strong className="text-gray-700">Phone:</strong> <span className="text-gray-600">{request.phone}</span></p>
+                              <p><strong className="text-gray-700">Submitted:</strong> {request.submittedAt}</p>
+                              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                                <p><strong className="text-green-800">Why they want to join:</strong></p>
+                                <p className="mt-1 text-gray-700 italic">"{request.reason}"</p>
+                              </div>
+                            </div>
                           </div>
-                          <Badge variant={user.status === "active" ? "default" : "secondary"}>
-                            {user.status}
-                          </Badge>
-                          <Badge variant="outline">{user.plan}</Badge>
+                          
+                          <div className="flex gap-3 ml-6">
+                            <Button 
+                              onClick={() => handleApproveJoinRequest(request.id)}
+                              variant="default" 
+                              size="sm"
+                              className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                              Approve
+                            </Button>
+                            <Button 
+                              onClick={() => handleDeclineJoinRequest(request.id)}
+                              variant="destructive" 
+                              size="sm"
+                              className="flex items-center gap-2"
+                            >
+                              <X className="h-4 w-4" />
+                              Decline
+                            </Button>
+                          </div>
                         </div>
-                        
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>Joined: {user.joinedAt}</span>
-                          <span>•</span>
-                          <span>Last seen: {user.lastSeen}</span>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -400,139 +506,69 @@ const AdminDashboard = () => {
           {/* Update Content Tab */}
           <TabsContent value="content">
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Edit className="h-5 w-5 text-primary" />
+              <Card className="shadow-xl bg-gradient-to-br from-white to-orange-50 border-orange-200">
+                <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+                  <CardTitle className="flex items-center gap-3 text-xl">
+                    <Edit className="h-6 w-6" />
                     Update Content 📝
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-orange-100">
                     Edit rules, guides, and WiFi information that users see
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <Card className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-semibold">Rules & Regulations</h3>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setEditingContent({ type: "rules", value: content.rules, open: true })}
-                          >
-                            <Edit className="h-3 w-3 mr-1" />
-                            Edit
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>Edit Rules & Regulations</DialogTitle>
-                            <DialogDescription>
-                              Update the community rules that users will see
-                            </DialogDescription>
-                          </DialogHeader>
-                          <Textarea
-                            value={editingContent.value}
-                            onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
-                            rows={12}
-                            className="font-mono"
-                          />
-                          <div className="flex gap-2">
-                            <Button onClick={handleSaveContent}>Save Changes</Button>
-                            <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
-                              Cancel
+                <CardContent className="p-6 space-y-6">
+                  {[
+                    { key: "rules", title: "Rules & Regulations", icon: "📋" },
+                    { key: "guide", title: "User Guide", icon: "🌟" },
+                    { key: "wifi", title: "WiFi Information", icon: "📶" }
+                  ].map((item) => (
+                    <Card key={item.key} className="p-4 bg-white shadow-md hover:shadow-lg transition-shadow">
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="font-semibold text-lg flex items-center gap-2">
+                          <span>{item.icon}</span>
+                          {item.title}
+                        </h3>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="bg-orange-50 hover:bg-orange-100 border-orange-300"
+                              onClick={() => setEditingContent({ type: item.key, value: content[item.key as keyof typeof content], open: true })}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
                             </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {content.rules.substring(0, 100)}...
-                    </p>
-                  </Card>
-
-                  <Card className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-semibold">User Guide</h3>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setEditingContent({ type: "guide", value: content.guide, open: true })}
-                          >
-                            <Edit className="h-3 w-3 mr-1" />
-                            Edit
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>Edit User Guide</DialogTitle>
-                            <DialogDescription>
-                              Update the guide that helps users navigate Nerdshive
-                            </DialogDescription>
-                          </DialogHeader>
-                          <Textarea
-                            value={editingContent.value}
-                            onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
-                            rows={12}
-                            className="font-mono"
-                          />
-                          <div className="flex gap-2">
-                            <Button onClick={handleSaveContent}>Save Changes</Button>
-                            <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {content.guide.substring(0, 100)}...
-                    </p>
-                  </Card>
-
-                  <Card className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-semibold">WiFi Information</h3>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setEditingContent({ type: "wifi", value: content.wifi, open: true })}
-                          >
-                            <Edit className="h-3 w-3 mr-1" />
-                            Edit
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>Edit WiFi Information</DialogTitle>
-                            <DialogDescription>
-                              Update WiFi credentials and information for users
-                            </DialogDescription>
-                          </DialogHeader>
-                          <Textarea
-                            value={editingContent.value}
-                            onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
-                            rows={12}
-                            className="font-mono"
-                          />
-                          <div className="flex gap-2">
-                            <Button onClick={handleSaveContent}>Save Changes</Button>
-                            <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {content.wifi.substring(0, 100)}...
-                    </p>
-                  </Card>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>Edit {item.title}</DialogTitle>
+                              <DialogDescription>
+                                Update the {item.title.toLowerCase()} that users will see
+                              </DialogDescription>
+                            </DialogHeader>
+                            <Textarea
+                              value={editingContent.value}
+                              onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
+                              rows={12}
+                              className="font-mono"
+                            />
+                            <div className="flex gap-2">
+                              <Button onClick={handleSaveContent} className="bg-orange-500 hover:bg-orange-600">
+                                Save Changes
+                              </Button>
+                              <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
+                                Cancel
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2 bg-gray-50 p-3 rounded-lg">
+                        {content[item.key as keyof typeof content].substring(0, 150)}...
+                      </p>
+                    </Card>
+                  ))}
                 </CardContent>
               </Card>
             </div>
@@ -540,54 +576,55 @@ const AdminDashboard = () => {
 
           {/* Query Panel Tab */}
           <TabsContent value="queries">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-primary" />
+            <Card className="shadow-xl bg-gradient-to-br from-white to-pink-50 border-pink-200">
+              <CardHeader className="bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <MessageSquare className="h-6 w-6" />
                   User Queries 💬
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-pink-100">
                   View and respond to user questions and support requests
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="p-6">
+                <div className="space-y-6">
                   {queries.map((query) => (
-                    <Card key={query.id} className="p-4">
-                      <div className="space-y-3">
+                    <Card key={query.id} className="p-6 shadow-md hover:shadow-lg transition-shadow bg-white">
+                      <div className="space-y-4">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="font-semibold">{query.userName}</h3>
+                            <h3 className="font-semibold text-lg text-gray-800">{query.userName}</h3>
                             <p className="text-sm text-muted-foreground">{query.submittedAt}</p>
                           </div>
-                          <Badge variant={query.status === "answered" ? "default" : "secondary"}>
+                          <Badge variant={query.status === "answered" ? "default" : "secondary"} className="px-3 py-1">
                             {query.status === "answered" ? "✅ Answered" : "⏳ Pending"}
                           </Badge>
                         </div>
                         
-                        <div className="p-3 bg-muted rounded-lg">
-                          <p className="text-sm"><strong>Question:</strong> {query.question}</p>
+                        <div className="p-4 bg-pink-50 rounded-lg border border-pink-200">
+                          <p className="text-sm"><strong className="text-pink-800">Question:</strong> {query.question}</p>
                         </div>
 
                         {query.status === "answered" ? (
-                          <div className="p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
-                            <p className="text-sm"><strong>Your Response:</strong> {query.response}</p>
+                          <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <p className="text-sm"><strong className="text-green-800">Your Response:</strong> {query.response}</p>
                           </div>
                         ) : (
-                          <div className="space-y-2">
+                          <div className="space-y-3">
                             <Textarea
                               placeholder="Type your response here..."
                               value={queryResponse}
                               onChange={(e) => setQueryResponse(e.target.value)}
                               rows={3}
+                              className="bg-white border-pink-200 focus:border-pink-400"
                             />
                             <Button 
                               onClick={() => handleRespondToQuery(query.id)}
                               disabled={!queryResponse.trim()}
-                              variant="gradient"
+                              className="bg-pink-500 hover:bg-pink-600"
                               size="sm"
                             >
-                              <Send className="h-3 w-3 mr-1" />
+                              <Send className="h-4 w-4 mr-2" />
                               Send Response
                             </Button>
                           </div>
@@ -595,48 +632,6 @@ const AdminDashboard = () => {
                       </div>
                     </Card>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Updates/Logs Tab */}
-          <TabsContent value="logs">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Recent Activity & Logs 📊
-                </CardTitle>
-                <CardDescription>
-                  Track recent memberships, user actions, and system updates
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 border border-green-200">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">New Member Approved</p>
-                      <p className="text-xs text-muted-foreground">Sarah Wilson joined with Weekly plan - 2 hours ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
-                    <CreditCard className="h-4 w-4 text-blue-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Payment Received</p>
-                      <p className="text-xs text-muted-foreground">₹1,400 payment verified for Weekly plan - 4 hours ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
-                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Content Updated</p>
-                      <p className="text-xs text-muted-foreground">WiFi information was updated by admin - 6 hours ago</p>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
