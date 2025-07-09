@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { authService } from "@/lib/auth";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -145,18 +147,40 @@ export const RegisterModal = ({ open, onOpenChange, onSwitchToSignIn }: Register
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Upload ID file if provided
+      let idFileUrl = '';
+      if (formData.idFile) {
+        idFileUrl = await api.uploadFile(formData.idFile, 'id-documents');
+      }
+
+      // Create user account
+      await authService.signUp({
+        email: formData.email,
+        password: formData.password,
+        full_name: formData.fullName,
+        phone: formData.mobile,
+        gender: formData.gender,
+        city: formData.city,
+        location: formData.location,
+        occupation: formData.occupation,
+        id_type: formData.idType,
+        id_number: formData.idNumber,
+        needs_reimbursement: formData.needsReimbursement,
+        organization_name: formData.organizationName,
+        gst_number: formData.gstNumber,
+        organization_location: formData.organizationLocation,
+      });
       
       setSubmitted(true);
       toast({
         title: "Registration Submitted!",
-        description: "You will be notified after admin approval.",
+        description: "Please check your email to confirm your account, then wait for admin approval.",
       });
     } catch (error) {
+      console.error('Registration error:', error);
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {

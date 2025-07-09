@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,9 +20,8 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showTwoFA, setShowTwoFA] = useState(false);
-  const [twoFACode, setTwoFACode] = useState("");
   const { toast } = useToast();
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,48 +35,28 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
       return;
     }
 
-    // If 2FA is shown, validate 2FA code
-    if (showTwoFA) {
-      if (!twoFACode || twoFACode !== "123456") {
-        setError("Invalid 2FA code. Try 123456 for demo.");
-        setIsLoading(false);
-        return;
-      }
-      
-      toast({
-        title: "Welcome back, Admin! 🔐",
-        description: "Your security is our top priority.",
-      });
-      window.location.href = "/admin";
-      return;
-    }
-
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await signIn(email, password);
       
-      // Demo credentials
-      if (email === "admin@nerdshive.com" && password === "admin123") {
-        setShowTwoFA(true);
-        setIsLoading(false);
-        return;
-      }
+      onOpenChange(false);
+      toast({
+        title: "Welcome back! 🎉",
+        description: "You've been signed in successfully.",
+      });
       
-      if (email === "user@nerdshive.com" && password === "user123") {
+      // Redirect based on user role will be handled by auth state
+    } catch (error: any) {
+      if (error.message.includes('Invalid login credentials')) {
+        setError("Invalid email or password. Please try again.");
+      } else if (error.message.includes('Email not confirmed')) {
+        setError("Please check your email and confirm your account.");
+      } else {
         toast({
-          title: "Welcome to Nerdshive! 😊",
-          description: "We're glad to have you here.",
+          title: "Demo Credentials",
+          description: "For demo: admin@nerdshive.com / admin123 or user@nerdshive.com / user123",
         });
-        window.location.href = "/dashboard";
-        return;
+        setError("Invalid credentials. Try the demo accounts above.");
       }
-      
-      // For any other credentials, show pending approval message
-      setError("Thanks for signing up! Your account is awaiting admin approval. We'll notify you soon 🌟");
-      setIsLoading(false);
-      return;
-    } catch (error) {
-      setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -164,27 +144,6 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
             </div>
           </div>
 
-          {showTwoFA && (
-            <div className="space-y-2">
-              <Label htmlFor="twofa" className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-primary" />
-                Two-Factor Authentication Code
-              </Label>
-              <Input
-                id="twofa"
-                type="text"
-                placeholder="Enter 6-digit code (Demo: 123456)"
-                value={twoFACode}
-                onChange={(e) => setTwoFACode(e.target.value)}
-                maxLength={6}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Welcome back, Admin! Your security is our top priority. 🔐
-              </p>
-            </div>
-          )}
-
           <Button 
             type="submit" 
             className="w-full" 
@@ -192,7 +151,7 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
             size="lg"
             disabled={isLoading}
           >
-            {isLoading ? "Verifying..." : showTwoFA ? "Verify & Sign In" : "Let's Go!"}
+            {isLoading ? "Signing in..." : "Let's Go!"}
           </Button>
         </form>
 
