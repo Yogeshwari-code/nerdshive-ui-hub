@@ -24,7 +24,9 @@ import {
   History,
   Bell,
   Users,
-  Home
+  Home,
+  Copy,
+  QrCode
 } from "lucide-react";
 
 // Mock data
@@ -141,6 +143,16 @@ const UserDashboard = () => {
   const [transactionId, setTransactionId] = useState("");
   const { toast } = useToast();
 
+  const UPI_ID = "nerdshive@paytm";
+
+  const copyUpiId = () => {
+    navigator.clipboard.writeText(UPI_ID);
+    toast({
+      title: "UPI ID Copied! 📋",
+      description: "UPI ID has been copied to clipboard.",
+    });
+  };
+
   const handlePlanSelection = (planId: string) => {
     setSelectedPlan(planId);
     const selectedPlanName = plans.find(p => p.id === planId)?.name;
@@ -209,7 +221,7 @@ const UserDashboard = () => {
               className="w-16 h-16 animate-bounce"
             />
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2">Welcome to Nerdshive, Friend! 😊</h1>
+              <h1 className="text-4xl font-bold text-foreground mb-2">Welcome to Nerdshive, Arjun Singh! 😊</h1>
               <p className="text-muted-foreground">We're glad to have you here. Let's make your coworking experience amazing!</p>
             </div>
           </div>
@@ -303,6 +315,36 @@ const UserDashboard = () => {
                       </Card>
                     ))}
                   </div>
+
+                  {/* UPI Payment Info */}
+                  <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3 text-green-800">
+                        <QrCode className="h-6 w-6" />
+                        Payment Information 💳
+                      </CardTitle>
+                      <CardDescription className="text-green-700">
+                        Use this UPI ID to make your payment
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-green-700 font-medium">UPI ID for payments:</p>
+                          <p className="text-xl font-bold text-green-800">{UPI_ID}</p>
+                        </div>
+                        <Button 
+                          onClick={copyUpiId}
+                          variant="outline"
+                          size="sm"
+                          className="bg-white hover:bg-green-50 border-green-300"
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy UPI ID
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   {/* Payment Upload Section */}
                   {selectedPlan && (

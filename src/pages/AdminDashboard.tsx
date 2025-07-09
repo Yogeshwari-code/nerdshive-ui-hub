@@ -19,8 +19,7 @@ import {
   Eye,
   Activity,
   X,
-  Copy,
-  QrCode
+  Users
 } from "lucide-react";
 
 // Mock data for payment verification
@@ -81,6 +80,49 @@ const mockJoinRequests = [
     reason: "Looking for a collaborative environment to work with other professionals",
     submittedAt: "2024-01-20",
     status: "pending"
+  }
+];
+
+// Mock data for approved users
+const mockApprovedUsers = [
+  {
+    id: 1,
+    name: "Arjun Singh",
+    email: "arjun.singh@email.com",
+    phone: "+91 9876543210",
+    profession: "Software Engineer",
+    plan: "Monthly",
+    amount: "₹4,600",
+    joinedAt: "2024-01-15",
+    lastActive: "2024-01-22",
+    totalHours: 45,
+    status: "active"
+  },
+  {
+    id: 2,
+    name: "Kavya Sharma",
+    email: "kavya.s@email.com",
+    phone: "+91 8765432109",
+    profession: "UI Designer",
+    plan: "Weekly",
+    amount: "₹1,400",
+    joinedAt: "2024-01-10",
+    lastActive: "2024-01-21",
+    totalHours: 28,
+    status: "active"
+  },
+  {
+    id: 3,
+    name: "Rohit Kumar",
+    email: "rohit.k@email.com",
+    phone: "+91 7654321098",
+    profession: "Digital Marketer",
+    plan: "Daily",
+    amount: "₹299",
+    joinedAt: "2024-01-20",
+    lastActive: "2024-01-22",
+    totalHours: 8,
+    status: "active"
   }
 ];
 
@@ -148,14 +190,14 @@ Password: Member@2024 (For monthly members only)
 const AdminDashboard = () => {
   const [payments, setPayments] = useState(mockPayments);
   const [joinRequests, setJoinRequests] = useState(mockJoinRequests);
+  const [approvedUsers, setApprovedUsers] = useState(mockApprovedUsers);
   const [queries, setQueries] = useState(mockQueries);
   const [content, setContent] = useState(editableContent);
   const [editingContent, setEditingContent] = useState({ type: "", value: "", open: false });
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [queryResponse, setQueryResponse] = useState("");
   const { toast } = useToast();
-
-  const UPI_ID = "nerdshive@paytm";
 
   const handleApprovePayment = (paymentId: number) => {
     const payment = payments.find(p => p.id === paymentId);
@@ -238,14 +280,6 @@ const AdminDashboard = () => {
     });
   };
 
-  const copyUpiId = () => {
-    navigator.clipboard.writeText(UPI_ID);
-    toast({
-      title: "UPI ID Copied! 📋",
-      description: "UPI ID has been copied to clipboard.",
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -269,35 +303,8 @@ const AdminDashboard = () => {
           </Button>
         </div>
 
-        {/* UPI Payment Info Card */}
-        <Card className="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-lg">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-green-800">
-              <QrCode className="h-6 w-6" />
-              Payment Information 💳
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-green-700 font-medium">UPI ID for payments:</p>
-                <p className="text-xl font-bold text-green-800">{UPI_ID}</p>
-              </div>
-              <Button 
-                onClick={copyUpiId}
-                variant="outline"
-                size="sm"
-                className="bg-white hover:bg-green-50 border-green-300"
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                Copy UPI ID
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
         <Tabs defaultValue="payment-verification" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 bg-white/70 backdrop-blur-sm p-2 rounded-2xl shadow-lg">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 bg-white/70 backdrop-blur-sm p-2 rounded-2xl shadow-lg">
             <TabsTrigger 
               value="payment-verification" 
               className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white"
@@ -318,6 +325,13 @@ const AdminDashboard = () => {
             >
               <Edit className="h-4 w-4" />
               <span className="hidden sm:inline">Content</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="approved-users" 
+              className="flex items-center gap-2 text-sm py-3 px-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white"
+            >
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Approved Users</span>
             </TabsTrigger>
             <TabsTrigger 
               value="queries" 
@@ -572,6 +586,108 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Approved Users Tab */}
+          <TabsContent value="approved-users">
+            <Card className="shadow-xl bg-gradient-to-br from-white to-indigo-50 border-indigo-200">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <Users className="h-6 w-6" />
+                  Approved Users 👥
+                </CardTitle>
+                <CardDescription className="text-indigo-100">
+                  {approvedUsers.length} active members are currently using Nerdshive! 🌟
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  {approvedUsers.map((user) => (
+                    <Card key={user.id} className="p-6 border-l-4 border-l-indigo-500 shadow-md hover:shadow-lg transition-shadow bg-white">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-4 flex-1">
+                          <div className="flex items-center gap-3">
+                            <h3 className="font-bold text-lg text-gray-800">{user.name}</h3>
+                            <Badge variant="outline" className="bg-indigo-100 text-indigo-800 border-indigo-300">
+                              {user.plan} Plan
+                            </Badge>
+                            <Badge variant={user.status === "active" ? "default" : "secondary"} className="bg-green-100 text-green-800">
+                              ✅ Active
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                            <div className="space-y-2">
+                              <p><strong className="text-gray-700">Email:</strong> <span className="text-blue-600">{user.email}</span></p>
+                              <p><strong className="text-gray-700">Phone:</strong> <span className="text-gray-600">{user.phone}</span></p>
+                              <p><strong className="text-gray-700">Profession:</strong> <span className="text-purple-600">{user.profession}</span></p>
+                            </div>
+                            <div className="space-y-2">
+                              <p><strong className="text-gray-700">Amount Paid:</strong> <span className="text-green-600 font-semibold">{user.amount}</span></p>
+                              <p><strong className="text-gray-700">Joined:</strong> {user.joinedAt}</p>
+                              <p><strong className="text-gray-700">Last Active:</strong> {user.lastActive}</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-3 ml-6">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="flex items-center gap-2 bg-indigo-50 hover:bg-indigo-100 border-indigo-300"
+                                onClick={() => setSelectedUser(user)}
+                              >
+                                <Eye className="h-4 w-4" />
+                                View Details
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-lg">
+                              <DialogHeader>
+                                <DialogTitle>User Details - {user.name}</DialogTitle>
+                                <DialogDescription>
+                                  Complete information about this user
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                                  <h4 className="font-semibold text-indigo-800 mb-3">Contact Information</h4>
+                                  <div className="space-y-2 text-sm">
+                                    <p><strong>Name:</strong> {user.name}</p>
+                                    <p><strong>Email:</strong> {user.email}</p>
+                                    <p><strong>Phone:</strong> {user.phone}</p>
+                                    <p><strong>Profession:</strong> {user.profession}</p>
+                                  </div>
+                                </div>
+                                
+                                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                                  <h4 className="font-semibold text-green-800 mb-3">Membership Details</h4>
+                                  <div className="space-y-2 text-sm">
+                                    <p><strong>Plan:</strong> {user.plan}</p>
+                                    <p><strong>Amount Paid:</strong> {user.amount}</p>
+                                    <p><strong>Joined Date:</strong> {user.joinedAt}</p>
+                                    <p><strong>Status:</strong> <span className="text-green-600 font-semibold">Active</span></p>
+                                  </div>
+                                </div>
+                                
+                                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                  <h4 className="font-semibold text-blue-800 mb-3">Usage Statistics</h4>
+                                  <div className="space-y-2 text-sm">
+                                    <p><strong>Total Hours:</strong> {user.totalHours} hours</p>
+                                    <p><strong>Last Active:</strong> {user.lastActive}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Query Panel Tab */}
