@@ -1,234 +1,249 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  UserCheck, 
   Users, 
+  UserCheck, 
+  UserX, 
   MessageSquare, 
   FileText, 
-  Check, 
-  X, 
-  Search,
-  Trash2,
-  Plus,
-  Settings,
-  LogOut
+  Activity,
+  Wifi,
+  Coffee,
+  Edit,
+  LogOut,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Send,
+  Eye,
+  CreditCard,
+  Settings
 } from "lucide-react";
 
-// Mock data
-const mockPendingUsers = [
+// Mock data for pending requests
+const mockRequests = [
   {
     id: 1,
-    fullName: "John Doe",
-    email: "john@example.com",
-    mobile: "9876543210",
-    city: "Mumbai",
-    occupation: "Software Developer",
-    idType: "PAN",
-    idNumber: "ABCDE1234F",
-    submittedAt: "2024-01-15",
-    needsReimbursement: true,
-    organizationName: "Tech Corp",
-    gstNumber: "27ABCDE1234F1Z5"
-  },
-  {
-    id: 2,
-    fullName: "Jane Smith",
-    email: "jane@example.com",
-    mobile: "9876543211",
-    city: "Delhi",
-    occupation: "Designer",
-    idType: "Aadhaar",
-    idNumber: "123456789012",
-    submittedAt: "2024-01-14",
-    needsReimbursement: false
-  }
-];
-
-const mockApprovedUsers = [
-  {
-    id: 3,
-    fullName: "Alice Johnson",
-    email: "alice@example.com",
-    planType: "Monthly",
-    status: "Active",
-    joinedAt: "2024-01-10"
-  },
-  {
-    id: 4,
-    fullName: "Bob Wilson",
-    email: "bob@example.com",
-    planType: "Weekly",
-    status: "Active", 
-    joinedAt: "2024-01-12"
-  }
-];
-
-const mockQueries = [
-  {
-    id: 1,
-    userEmail: "alice@example.com",
-    question: "What are the working hours for the coworking space?",
-    submittedAt: "2024-01-15",
-    response: "",
+    name: "Rahul Kumar",
+    email: "rahul.k@email.com",
+    plan: "Weekly",
+    amount: "₹1,400",
+    transactionId: "TXN123456789",
+    paymentScreenshot: "payment_proof_1.jpg",
+    submittedAt: "2024-01-20",
     status: "pending"
   },
   {
     id: 2,
-    userEmail: "bob@example.com",
-    question: "Can I book a private cabin for a meeting?",
-    submittedAt: "2024-01-14",
-    response: "Yes, private cabins can be booked in advance. Please contact the front desk.",
-    status: "answered"
+    name: "Priya Sharma",
+    email: "priya.s@email.com",
+    plan: "Monthly",
+    amount: "₹4,600",
+    transactionId: "TXN987654321",
+    paymentScreenshot: "payment_proof_2.jpg",
+    submittedAt: "2024-01-19",
+    status: "pending"
+  },
+  {
+    id: 3,
+    name: "Amit Singh",
+    email: "amit.singh@email.com",
+    plan: "Daily",
+    amount: "₹299",
+    transactionId: "TXN456789123",
+    paymentScreenshot: "payment_proof_3.jpg",
+    submittedAt: "2024-01-18",
+    status: "pending"
   }
 ];
 
+// Mock data for all users
+const mockUsers = [
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john@email.com",
+    plan: "Monthly",
+    status: "active",
+    joinedAt: "2024-01-01",
+    lastSeen: "2024-01-20"
+  },
+  {
+    id: 2,
+    name: "Sarah Wilson",
+    email: "sarah@email.com",
+    plan: "Weekly",
+    status: "active",
+    joinedAt: "2024-01-15",
+    lastSeen: "2024-01-19"
+  }
+];
+
+// Mock queries
+const mockQueries = [
+  {
+    id: 1,
+    userName: "Rahul Kumar",
+    question: "What are the working hours?",
+    submittedAt: "2024-01-20",
+    status: "pending",
+    response: ""
+  },
+  {
+    id: 2,
+    userName: "Priya Sharma",
+    question: "Can I extend my membership?",
+    submittedAt: "2024-01-19",
+    status: "answered",
+    response: "Yes, you can extend your membership by contacting us or through the app."
+  }
+];
+
+// Content that admin can edit
+const editableContent = {
+  rules: `Community Rules & Regulations 📋
+
+1. Maintain silence in designated quiet zones 🤫
+2. Clean up after yourself in common areas ✨
+3. No outside food in meeting rooms 🚫🍕
+4. Register guests at the front desk 📋
+5. Respect others' workspace and belongings 🤝
+6. Keep phone conversations brief in common areas 📱`,
+
+  guide: `🌟 Your Nerdshive Guide
+
+🚀 Getting Started:
+• Check in at the front desk with your membership
+• Collect your access card and locker key
+• Download our mobile app for bookings
+
+🏢 Facilities:
+• Meeting rooms (bookable via app)
+• Phone booths for private calls
+• Printing station (₹2 per page)
+• Coffee & snacks available 24/7
+
+⏰ Operating Hours:
+Monday - Saturday: 9 AM - 10 PM
+Sunday: 10 AM - 8 PM`,
+
+  wifi: `📶 WiFi Information
+
+Network: NERDSHIVE_GUEST
+Password: Welcome2024!
+
+🔐 Secure Network: NERDSHIVE_MEMBERS
+Password: Member@2024 (For monthly members only)
+
+📡 Speeds:
+• Guest Network: Up to 100 Mbps
+• Members Network: Up to 500 Mbps`
+};
+
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const [pendingUsers, setPendingUsers] = useState(mockPendingUsers);
-  const [approvedUsers, setApprovedUsers] = useState(mockApprovedUsers);
+  const [requests, setRequests] = useState(mockRequests);
+  const [users, setUsers] = useState(mockUsers);
   const [queries, setQueries] = useState(mockQueries);
-  const [rules, setRules] = useState([
-    "Maintain silence in designated quiet zones",
-    "Clean up after yourself in common areas",
-    "No outside food in meeting rooms",
-    "Register guests at the front desk"
-  ]);
-  const [welcomeInstructions, setWelcomeInstructions] = useState(
-    `Welcome to Nerdshive!
-
-Wi-Fi SSID: NERDSHIVE
-Password: 6DhE6RjFn$#hJkiD
-
-🖨️ Printer is located near the main lounge
-☕ Coffee station is on the 2nd floor
-💺 Please maintain designated seating arrangements
-🔒 Ensure you log out from all systems before leaving
-
-For any assistance, contact the front desk.`
-  );
-  
-  const [newRule, setNewRule] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [content, setContent] = useState(editableContent);
+  const [editingContent, setEditingContent] = useState({ type: "", value: "", open: false });
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [queryResponse, setQueryResponse] = useState("");
   const { toast } = useToast();
 
-  const handleLogout = () => {
-    navigate("/");
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
-  };
-
-  const handleManageUser = (userId: number, newStatus: string) => {
-    setApprovedUsers(prev => prev.map(user => 
-      user.id === userId ? { ...user, status: newStatus } : user
-    ));
-    toast({
-      title: "User Updated",
-      description: "User status has been updated successfully.",
-    });
-  };
-
-  const handleApproveUser = (userId: number) => {
-    const user = pendingUsers.find(u => u.id === userId);
-    if (user) {
-      setPendingUsers(prev => prev.filter(u => u.id !== userId));
-      setApprovedUsers(prev => [...prev, {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        planType: "Not Selected",
-        status: "Active",
-        joinedAt: new Date().toISOString().split('T')[0]
-      }]);
+  const handleApproveUser = (requestId: number) => {
+    const request = requests.find(r => r.id === requestId);
+    if (request) {
+      // Add to users list
+      const newUser = {
+        id: users.length + 1,
+        name: request.name,
+        email: request.email,
+        plan: request.plan,
+        status: "active",
+        joinedAt: new Date().toISOString().split('T')[0],
+        lastSeen: new Date().toISOString().split('T')[0]
+      };
+      setUsers(prev => [...prev, newUser]);
+      
+      // Remove from requests
+      setRequests(prev => prev.filter(r => r.id !== requestId));
       
       toast({
-        title: "User Approved",
-        description: `${user.fullName} has been approved and notified via WhatsApp.`,
+        title: "User Approved! ✅",
+        description: `${request.name} has been approved and can now access the workspace.`,
       });
     }
   };
 
-  const handleRejectUser = (userId: number) => {
-    const user = pendingUsers.find(u => u.id === userId);
-    if (user) {
-      setPendingUsers(prev => prev.filter(u => u.id !== userId));
-      toast({
-        title: "User Rejected",
-        description: `${user.fullName}'s application has been rejected.`,
-        variant: "destructive",
-      });
-    }
+  const handleDeclineUser = (requestId: number) => {
+    const request = requests.find(r => r.id === requestId);
+    setRequests(prev => prev.filter(r => r.id !== requestId));
+    
+    toast({
+      title: "Request Declined",
+      description: `${request?.name}'s request has been declined.`,
+      variant: "destructive"
+    });
   };
 
-  const handleQueryResponse = (queryId: number, response: string) => {
+  const handleLogout = () => {
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully.",
+    });
+    window.location.href = "/";
+  };
+
+  const handleSaveContent = () => {
+    setContent(prev => ({
+      ...prev,
+      [editingContent.type]: editingContent.value
+    }));
+    setEditingContent({ type: "", value: "", open: false });
+    
+    toast({
+      title: "Content Updated! 📝",
+      description: "The content has been successfully updated.",
+    });
+  };
+
+  const handleRespondToQuery = (queryId: number) => {
+    if (!queryResponse.trim()) return;
+
     setQueries(prev => prev.map(q => 
       q.id === queryId 
-        ? { ...q, response, status: "answered" }
+        ? { ...q, status: "answered", response: queryResponse }
         : q
     ));
     
+    setQueryResponse("");
     toast({
-      title: "Response Sent",
+      title: "Response Sent! 💬",
       description: "Your response has been sent to the user.",
     });
   };
 
-  const addRule = () => {
-    if (newRule.trim()) {
-      setRules(prev => [...prev, newRule.trim()]);
-      setNewRule("");
-      toast({
-        title: "Rule Added",
-        description: "New rule has been added successfully.",
-      });
-    }
-  };
-
-  const removeRule = (index: number) => {
-    setRules(prev => prev.filter((_, i) => i !== index));
-    toast({
-      title: "Rule Removed",
-      description: "Rule has been removed successfully.",
-    });
-  };
-
-  const saveWelcomeInstructions = () => {
-    toast({
-      title: "Instructions Updated",
-      description: "Welcome instructions have been saved successfully.",
-    });
-  };
-
-  const filteredUsers = approvedUsers.filter(user =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="min-h-screen bg-gradient-hero p-6">
+    <div className="min-h-screen bg-gradient-hero p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage users, approvals, and coworking space operations</p>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Welcome back, Admin! 🔐</h1>
+            <p className="text-muted-foreground">Your security is our top priority. Let's manage Nerdshive together!</p>
           </div>
           <Button 
             onClick={handleLogout}
-            variant="outline"
+            variant="outline" 
             className="flex items-center gap-2"
           >
             <LogOut className="h-4 w-4" />
@@ -236,109 +251,100 @@ For any assistance, contact the front desk.`
           </Button>
         </div>
 
-        <Tabs defaultValue="approvals" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="approvals" className="flex items-center gap-2">
+        <Tabs defaultValue="requests" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1">
+            <TabsTrigger value="requests" className="flex items-center gap-2 text-xs">
               <UserCheck className="h-4 w-4" />
-              Approval Requests
+              <span className="hidden sm:inline">Requests</span>
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
+            <TabsTrigger value="customers" className="flex items-center gap-2 text-xs">
               <Users className="h-4 w-4" />
-              User Management
+              <span className="hidden sm:inline">Customers</span>
             </TabsTrigger>
-            <TabsTrigger value="queries" className="flex items-center gap-2">
+            <TabsTrigger value="content" className="flex items-center gap-2 text-xs">
+              <Edit className="h-4 w-4" />
+              <span className="hidden sm:inline">Content</span>
+            </TabsTrigger>
+            <TabsTrigger value="queries" className="flex items-center gap-2 text-xs">
               <MessageSquare className="h-4 w-4" />
-              Query Management
+              <span className="hidden sm:inline">Queries</span>
             </TabsTrigger>
-            <TabsTrigger value="rules" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Rules & Instructions
+            <TabsTrigger value="logs" className="flex items-center gap-2 text-xs">
+              <Activity className="h-4 w-4" />
+              <span className="hidden sm:inline">Logs</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Approval Requests Tab */}
-          <TabsContent value="approvals">
+          {/* Requests Tab */}
+          <TabsContent value="requests">
             <Card>
               <CardHeader>
-                <CardTitle>Pending Approval Requests</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <UserCheck className="h-5 w-5 text-primary" />
+                  Pending User Requests 📋
+                </CardTitle>
                 <CardDescription>
-                  Review and approve new user registrations
+                  You've got {requests.length} new user requests today! Let's take a look and verify their plans 🧐
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {pendingUsers.length === 0 ? (
+                {requests.length === 0 ? (
                   <Alert>
-                    <AlertDescription>No pending approval requests.</AlertDescription>
+                    <CheckCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      🎉 All caught up! No pending requests at the moment.
+                    </AlertDescription>
                   </Alert>
                 ) : (
                   <div className="space-y-4">
-                    {pendingUsers.map((user) => (
-                      <Card key={user.id} className="p-4">
+                    {requests.map((request) => (
+                      <Card key={request.id} className="p-4 border-l-4 border-l-primary">
                         <div className="flex justify-between items-start">
                           <div className="space-y-2 flex-1">
-                            <div className="flex items-center gap-4">
-                              <h3 className="font-semibold text-lg">{user.fullName}</h3>
-                              <Badge variant="outline">Pending</Badge>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-semibold">{request.name}</h3>
+                              <Badge variant="outline">{request.plan} Plan</Badge>
                             </div>
                             
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                               <div>
-                                <span className="font-medium">Email:</span> {user.email}
+                                <p><strong>Email:</strong> {request.email}</p>
+                                <p><strong>Amount:</strong> {request.amount}</p>
+                                <p><strong>Submitted:</strong> {request.submittedAt}</p>
                               </div>
                               <div>
-                                <span className="font-medium">Mobile:</span> {user.mobile}
-                              </div>
-                              <div>
-                                <span className="font-medium">City:</span> {user.city}
-                              </div>
-                              <div>
-                                <span className="font-medium">Occupation:</span> {user.occupation}
-                              </div>
-                              <div>
-                                <span className="font-medium">ID Type:</span> {user.idType}
-                              </div>
-                              <div>
-                                <span className="font-medium">ID Number:</span> {user.idNumber}
+                                <p><strong>Transaction ID:</strong> {request.transactionId}</p>
+                                <p><strong>Payment Screenshot:</strong> {request.paymentScreenshot}</p>
                               </div>
                             </div>
-
-                            {user.needsReimbursement && (
-                              <div className="border-t pt-2 mt-2">
-                                <h4 className="font-medium mb-2">Organization Details:</h4>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <span className="font-medium">Company:</span> {user.organizationName}
-                                  </div>
-                                  <div>
-                                    <span className="font-medium">GST:</span> {user.gstNumber}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-
-                            <p className="text-xs text-muted-foreground">
-                              Submitted on {user.submittedAt}
-                            </p>
                           </div>
-
+                          
                           <div className="flex gap-2 ml-4">
-                            <Button
-                              variant="outline"
+                            <Button 
+                              variant="outline" 
                               size="sm"
-                              onClick={() => handleApproveUser(user.id)}
-                              className="text-success hover:bg-success hover:text-success-foreground"
+                              className="flex items-center gap-1"
                             >
-                              <Check className="h-4 w-4 mr-1" />
+                              <Eye className="h-3 w-3" />
+                              View
+                            </Button>
+                            <Button 
+                              onClick={() => handleApproveUser(request.id)}
+                              variant="default" 
+                              size="sm"
+                              className="flex items-center gap-1"
+                            >
+                              <CheckCircle className="h-3 w-3" />
                               Approve
                             </Button>
-                            <Button
-                              variant="outline"
+                            <Button 
+                              onClick={() => handleDeclineUser(request.id)}
+                              variant="destructive" 
                               size="sm"
-                              onClick={() => handleRejectUser(user.id)}
-                              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                              className="flex items-center gap-1"
                             >
-                              <X className="h-4 w-4 mr-1" />
-                              Reject
+                              <UserX className="h-3 w-3" />
+                              Decline
                             </Button>
                           </div>
                         </div>
@@ -350,90 +356,39 @@ For any assistance, contact the front desk.`
             </Card>
           </TabsContent>
 
-          {/* User Management Tab */}
-          <TabsContent value="users">
+          {/* Customer Management Tab */}
+          <TabsContent value="customers">
             <Card>
               <CardHeader>
-                <CardTitle>Approved Users</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Customer Management 👥
+                </CardTitle>
                 <CardDescription>
-                  Manage all approved and active users
+                  View and manage all user profiles and memberships
                 </CardDescription>
-                <div className="flex items-center gap-2">
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="max-w-sm"
-                  />
-                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {filteredUsers.map((user) => (
+                  {users.map((user) => (
                     <Card key={user.id} className="p-4">
                       <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="font-semibold">{user.fullName}</h3>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
-                          <div className="flex items-center gap-4 mt-2">
-                            <Badge variant={user.status === "Active" ? "default" : "secondary"}>
-                              {user.status}
-                            </Badge>
-                            <span className="text-sm">Plan: {user.planType}</span>
-                            <span className="text-sm text-muted-foreground">
-                              Joined: {user.joinedAt}
-                            </span>
+                        <div className="flex items-center gap-4">
+                          <div>
+                            <h3 className="font-semibold">{user.name}</h3>
+                            <p className="text-sm text-muted-foreground">{user.email}</p>
                           </div>
+                          <Badge variant={user.status === "active" ? "default" : "secondary"}>
+                            {user.status}
+                          </Badge>
+                          <Badge variant="outline">{user.plan}</Badge>
                         </div>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Settings className="h-4 w-4 mr-1" />
-                              Manage
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Manage User: {user.fullName}</DialogTitle>
-                              <DialogDescription>
-                                Update user status and plan details
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div>
-                                  <span className="font-medium">Email:</span> {user.email}
-                                </div>
-                                <div>
-                                  <span className="font-medium">Plan:</span> {user.planType}
-                                </div>
-                                <div>
-                                  <span className="font-medium">Joined:</span> {user.joinedAt}
-                                </div>
-                                <div>
-                                  <span className="font-medium">Current Status:</span> {user.status}
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Update Status</Label>
-                                <Select 
-                                  defaultValue={user.status}
-                                  onValueChange={(value) => handleManageUser(user.id, value)}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Active">Active</SelectItem>
-                                    <SelectItem value="Inactive">Inactive</SelectItem>
-                                    <SelectItem value="Suspended">Suspended</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
+                        
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span>Joined: {user.joinedAt}</span>
+                          <span>•</span>
+                          <span>Last seen: {user.lastSeen}</span>
+                        </div>
                       </div>
                     </Card>
                   ))}
@@ -442,13 +397,157 @@ For any assistance, contact the front desk.`
             </Card>
           </TabsContent>
 
-          {/* Query Management Tab */}
+          {/* Update Content Tab */}
+          <TabsContent value="content">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Edit className="h-5 w-5 text-primary" />
+                    Update Content 📝
+                  </CardTitle>
+                  <CardDescription>
+                    Edit rules, guides, and WiFi information that users see
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Card className="p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold">Rules & Regulations</h3>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditingContent({ type: "rules", value: content.rules, open: true })}
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Edit Rules & Regulations</DialogTitle>
+                            <DialogDescription>
+                              Update the community rules that users will see
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Textarea
+                            value={editingContent.value}
+                            onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
+                            rows={12}
+                            className="font-mono"
+                          />
+                          <div className="flex gap-2">
+                            <Button onClick={handleSaveContent}>Save Changes</Button>
+                            <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {content.rules.substring(0, 100)}...
+                    </p>
+                  </Card>
+
+                  <Card className="p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold">User Guide</h3>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditingContent({ type: "guide", value: content.guide, open: true })}
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Edit User Guide</DialogTitle>
+                            <DialogDescription>
+                              Update the guide that helps users navigate Nerdshive
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Textarea
+                            value={editingContent.value}
+                            onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
+                            rows={12}
+                            className="font-mono"
+                          />
+                          <div className="flex gap-2">
+                            <Button onClick={handleSaveContent}>Save Changes</Button>
+                            <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {content.guide.substring(0, 100)}...
+                    </p>
+                  </Card>
+
+                  <Card className="p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold">WiFi Information</h3>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditingContent({ type: "wifi", value: content.wifi, open: true })}
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Edit WiFi Information</DialogTitle>
+                            <DialogDescription>
+                              Update WiFi credentials and information for users
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Textarea
+                            value={editingContent.value}
+                            onChange={(e) => setEditingContent(prev => ({ ...prev, value: e.target.value }))}
+                            rows={12}
+                            className="font-mono"
+                          />
+                          <div className="flex gap-2">
+                            <Button onClick={handleSaveContent}>Save Changes</Button>
+                            <Button variant="outline" onClick={() => setEditingContent({ type: "", value: "", open: false })}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {content.wifi.substring(0, 100)}...
+                    </p>
+                  </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Query Panel Tab */}
           <TabsContent value="queries">
             <Card>
               <CardHeader>
-                <CardTitle>User Queries</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                  User Queries 💬
+                </CardTitle>
                 <CardDescription>
-                  Respond to user questions and concerns
+                  View and respond to user questions and support requests
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -458,41 +557,37 @@ For any assistance, contact the front desk.`
                       <div className="space-y-3">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h4 className="font-medium">{query.userEmail}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {query.submittedAt}
-                            </p>
+                            <h3 className="font-semibold">{query.userName}</h3>
+                            <p className="text-sm text-muted-foreground">{query.submittedAt}</p>
                           </div>
                           <Badge variant={query.status === "answered" ? "default" : "secondary"}>
-                            {query.status}
+                            {query.status === "answered" ? "✅ Answered" : "⏳ Pending"}
                           </Badge>
                         </div>
                         
                         <div className="p-3 bg-muted rounded-lg">
-                          <p className="text-sm">{query.question}</p>
+                          <p className="text-sm"><strong>Question:</strong> {query.question}</p>
                         </div>
 
                         {query.status === "answered" ? (
                           <div className="p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
-                            <p className="text-sm">{query.response}</p>
+                            <p className="text-sm"><strong>Your Response:</strong> {query.response}</p>
                           </div>
                         ) : (
                           <div className="space-y-2">
-                            <Label>Your Response</Label>
                             <Textarea
                               placeholder="Type your response here..."
-                              onChange={(e) => {
-                                const updatedQueries = queries.map(q =>
-                                  q.id === query.id ? { ...q, response: e.target.value } : q
-                                );
-                                setQueries(updatedQueries);
-                              }}
+                              value={queryResponse}
+                              onChange={(e) => setQueryResponse(e.target.value)}
+                              rows={3}
                             />
-                            <Button
+                            <Button 
+                              onClick={() => handleRespondToQuery(query.id)}
+                              disabled={!queryResponse.trim()}
+                              variant="gradient"
                               size="sm"
-                              onClick={() => handleQueryResponse(query.id, query.response)}
-                              disabled={!query.response?.trim()}
                             >
+                              <Send className="h-3 w-3 mr-1" />
                               Send Response
                             </Button>
                           </div>
@@ -505,74 +600,46 @@ For any assistance, contact the front desk.`
             </Card>
           </TabsContent>
 
-          {/* Rules & Instructions Tab */}
-          <TabsContent value="rules">
-            <div className="grid gap-6">
-              {/* Community Rules */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Community Rules</CardTitle>
-                  <CardDescription>
-                    Manage rules that all users must follow
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add a new rule..."
-                        value={newRule}
-                        onChange={(e) => setNewRule(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addRule()}
-                      />
-                      <Button onClick={addRule} disabled={!newRule.trim()}>
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add
-                      </Button>
-                    </div>
-
-                    <div className="space-y-2">
-                      {rules.map((rule, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                          <span className="text-sm">{rule}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeRule(index)}
-                            className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
+          {/* Updates/Logs Tab */}
+          <TabsContent value="logs">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Recent Activity & Logs 📊
+                </CardTitle>
+                <CardDescription>
+                  Track recent memberships, user actions, and system updates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 border border-green-200">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">New Member Approved</p>
+                      <p className="text-xs text-muted-foreground">Sarah Wilson joined with Weekly plan - 2 hours ago</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Welcome Instructions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Welcome Instructions</CardTitle>
-                  <CardDescription>
-                    Instructions shown to users in their dashboard
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Textarea
-                      value={welcomeInstructions}
-                      onChange={(e) => setWelcomeInstructions(e.target.value)}
-                      rows={12}
-                      className="font-mono text-sm"
-                    />
-                    <Button onClick={saveWelcomeInstructions} variant="gradient">
-                      Save Instructions
-                    </Button>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
+                    <CreditCard className="h-4 w-4 text-blue-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Payment Received</p>
+                      <p className="text-xs text-muted-foreground">₹1,400 payment verified for Weekly plan - 4 hours ago</p>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Content Updated</p>
+                      <p className="text-xs text-muted-foreground">WiFi information was updated by admin - 6 hours ago</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

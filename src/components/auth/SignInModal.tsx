@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { LogIn, Eye, EyeOff } from "lucide-react";
+import { LogIn, Eye, EyeOff, Shield } from "lucide-react";
 
 interface SignInModalProps {
   open: boolean;
@@ -19,6 +19,8 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showTwoFA, setShowTwoFA] = useState(false);
+  const [twoFACode, setTwoFACode] = useState("");
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,31 +35,44 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
       return;
     }
 
+    // If 2FA is shown, validate 2FA code
+    if (showTwoFA) {
+      if (!twoFACode || twoFACode !== "123456") {
+        setError("Invalid 2FA code. Try 123456 for demo.");
+        setIsLoading(false);
+        return;
+      }
+      
+      toast({
+        title: "Welcome back, Admin! 🔐",
+        description: "Your security is our top priority.",
+      });
+      window.location.href = "/admin";
+      return;
+    }
+
     // Simulate API call
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Demo credentials
       if (email === "admin@nerdshive.com" && password === "admin123") {
-        toast({
-          title: "Welcome Admin!",
-          description: "You have successfully signed in as admin.",
-        });
-        window.location.href = "/admin";
+        setShowTwoFA(true);
+        setIsLoading(false);
         return;
       }
       
       if (email === "user@nerdshive.com" && password === "user123") {
         toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in.",
+          title: "Welcome to Nerdshive! 😊",
+          description: "We're glad to have you here.",
         });
         window.location.href = "/dashboard";
         return;
       }
       
       // For any other credentials, show pending approval message
-      setError("Your registration is pending admin approval. You will be notified once approved.");
+      setError("Thanks for signing up! Your account is awaiting admin approval. We'll notify you soon 🌟");
       setIsLoading(false);
       return;
     } catch (error) {
@@ -149,6 +164,27 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
             </div>
           </div>
 
+          {showTwoFA && (
+            <div className="space-y-2">
+              <Label htmlFor="twofa" className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" />
+                Two-Factor Authentication Code
+              </Label>
+              <Input
+                id="twofa"
+                type="text"
+                placeholder="Enter 6-digit code (Demo: 123456)"
+                value={twoFACode}
+                onChange={(e) => setTwoFACode(e.target.value)}
+                maxLength={6}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Welcome back, Admin! Your security is our top priority. 🔐
+              </p>
+            </div>
+          )}
+
           <Button 
             type="submit" 
             className="w-full" 
@@ -156,7 +192,7 @@ export const SignInModal = ({ open, onOpenChange, onSwitchToRegister }: SignInMo
             size="lg"
             disabled={isLoading}
           >
-            {isLoading ? "Signing In..." : "Sign In"}
+            {isLoading ? "Verifying..." : showTwoFA ? "Verify & Sign In" : "Let's Go!"}
           </Button>
         </form>
 

@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { 
   CreditCard, 
@@ -16,16 +19,21 @@ import {
   Coffee,
   CheckCircle,
   AlertCircle,
-  Send
+  Send,
+  Upload,
+  History,
+  Bell,
+  Users,
+  Home
 } from "lucide-react";
 
 // Mock data
 const plans = [
   {
     id: "daily",
-    name: "Daily Plan",
-    price: "₹500",
-    period: "per day",
+    name: "Daily",
+    price: "₹299",
+    period: "+ GST",
     features: [
       "8 hours access",
       "High-speed Wi-Fi",
@@ -35,9 +43,9 @@ const plans = [
   },
   {
     id: "weekly", 
-    name: "Weekly Plan",
-    price: "₹3,000",
-    period: "per week",
+    name: "Weekly",
+    price: "₹1,400",
+    period: "+ GST",
     features: [
       "Unlimited access",
       "High-speed Wi-Fi", 
@@ -49,9 +57,9 @@ const plans = [
   },
   {
     id: "monthly",
-    name: "Monthly Plan", 
-    price: "₹10,000",
-    period: "per month",
+    name: "Monthly", 
+    price: "₹4,600",
+    period: "+ GST",
     features: [
       "24/7 access",
       "Dedicated desk option",
@@ -76,49 +84,69 @@ const mockQueries = [
     submittedAt: "2024-01-14", 
     status: "answered",
     response: "Yes, private cabins can be booked in advance. Please contact the front desk or use our booking system."
-  },
-  {
-    id: 3,
-    question: "Is parking available at the facility?",
-    submittedAt: "2024-01-16",
-    status: "pending",
-    response: ""
   }
 ];
 
 const communityRules = [
-  "Maintain silence in designated quiet zones",
-  "Clean up after yourself in common areas", 
-  "No outside food in meeting rooms",
-  "Register guests at the front desk",
-  "Respect others' workspace and belongings",
-  "Keep phone conversations brief in common areas"
+  "Maintain silence in designated quiet zones 🤫",
+  "Clean up after yourself in common areas ✨", 
+  "No outside food in meeting rooms 🚫🍕",
+  "Register guests at the front desk 📋",
+  "Respect others' workspace and belongings 🤝",
+  "Keep phone conversations brief in common areas 📱"
 ];
 
-const welcomeInstructions = `Welcome to Nerdshive!
+const guideContent = `🌟 Your Nerdshive Guide
 
-Wi-Fi SSID: NERDSHIVE
-Password: 6DhE6RjFn$#hJkiD
+🚀 Getting Started:
+• Check in at the front desk with your membership
+• Collect your access card and locker key
+• Download our mobile app for bookings
 
-🖨️ Printer is located near the main lounge
-☕ Coffee station is on the 2nd floor  
-💺 Please maintain designated seating arrangements
-🔒 Ensure you log out from all systems before leaving
+🏢 Facilities:
+• Meeting rooms (bookable via app)
+• Phone booths for private calls
+• Printing station (₹2 per page)
+• Coffee & snacks available 24/7
 
-For any assistance, contact the front desk.`;
+⏰ Operating Hours:
+Monday - Saturday: 9 AM - 10 PM
+Sunday: 10 AM - 8 PM
+
+📱 Need Help?
+Contact our friendly staff at the front desk or use the Query Panel! 😊`;
+
+const wifiInfo = `📶 WiFi Information
+
+Network: NERDSHIVE_GUEST
+Password: Welcome2024!
+
+🔐 Secure Network: NERDSHIVE_MEMBERS
+Password: Member@2024 (For monthly members only)
+
+📡 Speeds:
+• Guest Network: Up to 100 Mbps
+• Members Network: Up to 500 Mbps
+
+💡 Pro Tips:
+• Use the Members network for video calls
+• Guest network is perfect for browsing
+• Contact IT support for any connectivity issues`;
 
 const UserDashboard = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [queries, setQueries] = useState(mockQueries);
   const [newQuery, setNewQuery] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [transactionId, setTransactionId] = useState("");
   const { toast } = useToast();
 
   const handlePlanSelection = (planId: string) => {
     setSelectedPlan(planId);
     const selectedPlanName = plans.find(p => p.id === planId)?.name;
     toast({
-      title: "Plan Selected",
-      description: `You have selected the ${selectedPlanName}. Payment integration would be implemented here.`,
+      title: "Great choice! 🎉",
+      description: `You've selected the ${selectedPlanName} plan. Now upload your payment details below!`,
     });
   };
 
@@ -137,48 +165,99 @@ const UserDashboard = () => {
     setNewQuery("");
     
     toast({
-      title: "Query Submitted",
-      description: "Your query has been submitted. You'll receive a response soon.",
+      title: "Question Submitted! ✨",
+      description: "We'll get back to you soon with an answer.",
     });
   };
 
+  const handlePaymentSubmit = () => {
+    if (!selectedPlan || !paymentScreenshot || !transactionId) {
+      toast({
+        title: "Oops! 🤔",
+        description: "Please select a plan, upload payment screenshot, and enter transaction ID.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Payment Submitted! 💸",
+      description: "Done? We'll notify you once your payment is verified.",
+    });
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setPaymentScreenshot(file);
+      toast({
+        title: "Screenshot Uploaded! 📸",
+        description: "Great! Now enter your transaction ID.",
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-hero p-6">
+    <div className="min-h-screen bg-gradient-hero p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome Back!</h1>
-          <p className="text-muted-foreground">Manage your coworking experience and stay connected</p>
+        {/* Welcome Header with Bee */}
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <img 
+              src="/lovable-uploads/93beee19-74d5-4559-b722-c34c139a12cb.png" 
+              alt="Nerdshive Bee" 
+              className="w-16 h-16 animate-bounce"
+            />
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-2">Welcome to Nerdshive, Friend! 😊</h1>
+              <p className="text-muted-foreground">We're glad to have you here. Let's make your coworking experience amazing!</p>
+            </div>
+          </div>
         </div>
 
         <Tabs defaultValue="plans" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="plans" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 gap-1">
+            <TabsTrigger value="plans" className="flex items-center gap-2 text-xs">
               <CreditCard className="h-4 w-4" />
-              Choose Plan
+              <span className="hidden sm:inline">Plans</span>
             </TabsTrigger>
-            <TabsTrigger value="queries" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              My Queries
-            </TabsTrigger>
-            <TabsTrigger value="rules" className="flex items-center gap-2">
+            <TabsTrigger value="rules" className="flex items-center gap-2 text-xs">
               <FileText className="h-4 w-4" />
-              Rules & Instructions
+              <span className="hidden sm:inline">Rules</span>
+            </TabsTrigger>
+            <TabsTrigger value="guide" className="flex items-center gap-2 text-xs">
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Guide</span>
+            </TabsTrigger>
+            <TabsTrigger value="wifi" className="flex items-center gap-2 text-xs">
+              <Wifi className="h-4 w-4" />
+              <span className="hidden sm:inline">WiFi</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-2 text-xs">
+              <History className="h-4 w-4" />
+              <span className="hidden sm:inline">History</span>
+            </TabsTrigger>
+            <TabsTrigger value="queries" className="flex items-center gap-2 text-xs">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Ask Us</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Choose Plan Tab */}
+          {/* Plan Selection Tab */}
           <TabsContent value="plans">
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Choose Your Plan</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                    Choose Your Perfect Plan 🎯
+                  </CardTitle>
                   <CardDescription>
-                    Select a plan that best fits your working style and needs
+                    Select a plan that matches your workflow and let's get started!
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     {plans.map((plan) => (
                       <Card 
                         key={plan.id} 
@@ -191,7 +270,7 @@ const UserDashboard = () => {
                       >
                         {plan.popular && (
                           <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                            <Badge className="bg-gradient-primary">Most Popular</Badge>
+                            <Badge className="bg-gradient-primary">⭐ Most Popular</Badge>
                           </div>
                         )}
                         
@@ -218,42 +297,179 @@ const UserDashboard = () => {
                             variant={selectedPlan === plan.id ? "default" : "outline"}
                             size="lg"
                           >
-                            {selectedPlan === plan.id ? "Selected" : "Select Plan"}
+                            {selectedPlan === plan.id ? "✅ Selected" : "Select Plan"}
                           </Button>
                         </CardContent>
                       </Card>
                     ))}
                   </div>
 
+                  {/* Payment Upload Section */}
                   {selectedPlan && (
-                    <Alert className="mt-6">
-                      <CheckCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        You have selected the {plans.find(p => p.id === selectedPlan)?.name}. 
-                        Payment integration and plan activation would be implemented here.
-                      </AlertDescription>
-                    </Alert>
+                    <Card className="border-2 border-primary/20 bg-primary/5">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Upload className="h-5 w-5 text-primary" />
+                          Upload Payment Details 💳
+                        </CardTitle>
+                        <CardDescription>
+                          Almost there! Upload your payment screenshot and transaction ID.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="screenshot">Payment Screenshot</Label>
+                          <Input
+                            id="screenshot"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            className="mt-1"
+                          />
+                          {paymentScreenshot && (
+                            <p className="text-sm text-success mt-1">✅ {paymentScreenshot.name}</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="txnId">Transaction ID</Label>
+                          <Input
+                            id="txnId"
+                            placeholder="Enter your transaction ID"
+                            value={transactionId}
+                            onChange={(e) => setTransactionId(e.target.value)}
+                            className="mt-1"
+                          />
+                        </div>
+
+                        <Button 
+                          onClick={handlePaymentSubmit}
+                          className="w-full"
+                          variant="gradient"
+                          size="lg"
+                        >
+                          Submit Payment 🚀
+                        </Button>
+                      </CardContent>
+                    </Card>
                   )}
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          {/* My Queries Tab */}
+          {/* Rules & Regulations Tab */}
+          <TabsContent value="rules">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Community Rules & Regulations 📋
+                </CardTitle>
+                <CardDescription>
+                  Let's keep our space awesome for everyone! Here are our friendly guidelines.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {communityRules.map((rule, index) => (
+                    <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-colors">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center font-medium">
+                        {index + 1}
+                      </div>
+                      <p className="text-sm leading-relaxed">{rule}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Guide Tab */}
+          <TabsContent value="guide">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Home className="h-5 w-5 text-primary" />
+                  Your Nerdshive Guide 📖
+                </CardTitle>
+                <CardDescription>
+                  Everything you need to know to make the most of your time here!
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap leading-relaxed font-sans">
+                    {guideContent}
+                  </pre>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* WiFi Info Tab */}
+          <TabsContent value="wifi">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Wifi className="h-5 w-5 text-primary" />
+                  WiFi Information 📶
+                </CardTitle>
+                <CardDescription>
+                  Stay connected with our high-speed internet!
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap leading-relaxed font-sans">
+                    {wifiInfo}
+                  </pre>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Usage History Tab */}
+          <TabsContent value="history">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5 text-primary" />
+                  Usage History 📊
+                </CardTitle>
+                <CardDescription>
+                  Track your Nerdshive journey and plan usage.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    🎉 Welcome new member! Your usage history will appear here once you start using our services.
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Query Panel Tab */}
           <TabsContent value="queries">
             <div className="space-y-6">
               {/* Submit New Query */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Submit a Query</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                    Ask a Question ❓
+                  </CardTitle>
                   <CardDescription>
-                    Have a question or need assistance? Ask us anything!
+                    Have a question or need assistance? We're here to help! 😊
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <Textarea
-                      placeholder="Type your question here..."
+                      placeholder="What's on your mind? Ask us anything..."
                       value={newQuery}
                       onChange={(e) => setNewQuery(e.target.value)}
                       rows={4}
@@ -262,9 +478,10 @@ const UserDashboard = () => {
                       onClick={handleSubmitQuery}
                       disabled={!newQuery.trim()}
                       variant="gradient"
+                      className="w-full"
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      Submit Query
+                      Ask Question
                     </Button>
                   </div>
                 </CardContent>
@@ -273,15 +490,15 @@ const UserDashboard = () => {
               {/* Previous Queries */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Queries</CardTitle>
+                  <CardTitle>Your Questions 💭</CardTitle>
                   <CardDescription>
-                    Track your previous questions and responses
+                    Track your conversations with our team
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {queries.length === 0 ? (
                     <Alert>
-                      <AlertDescription>No queries submitted yet.</AlertDescription>
+                      <AlertDescription>✨ No questions yet. Feel free to ask us anything!</AlertDescription>
                     </Alert>
                   ) : (
                     <div className="space-y-4">
@@ -311,7 +528,7 @@ const UserDashboard = () => {
 
                             {query.status === "answered" && query.response && (
                               <div className="p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
-                                <p className="text-sm font-medium mb-1">Admin Response:</p>
+                                <p className="text-sm font-medium mb-1">💬 Our Response:</p>
                                 <p className="text-sm">{query.response}</p>
                               </div>
                             )}
@@ -319,7 +536,7 @@ const UserDashboard = () => {
                             {query.status === "pending" && (
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <AlertCircle className="h-4 w-4" />
-                                <span>Waiting for admin response...</span>
+                                <span>We're working on your answer... ⏰</span>
                               </div>
                             )}
                           </div>
@@ -327,86 +544,6 @@ const UserDashboard = () => {
                       ))}
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Rules & Instructions Tab */}
-          <TabsContent value="rules">
-            <div className="grid gap-6">
-              {/* Welcome Instructions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Wifi className="h-5 w-5 text-primary" />
-                    Welcome Instructions
-                  </CardTitle>
-                  <CardDescription>
-                    Important information for your coworking experience
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <pre className="text-sm font-mono whitespace-pre-wrap leading-relaxed">
-                      {welcomeInstructions}
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Community Rules */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
-                    Community Rules
-                  </CardTitle>
-                  <CardDescription>
-                    Please follow these guidelines to maintain a productive environment
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {communityRules.map((rule, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium mt-0.5">
-                          {index + 1}
-                        </div>
-                        <p className="text-sm leading-relaxed">{rule}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Quick Access */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Coffee className="h-5 w-5 text-primary" />
-                    Quick Access
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-                      <Calendar className="h-6 w-6" />
-                      <span className="text-sm">Book Meeting Room</span>
-                    </Button>
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-                      <Coffee className="h-6 w-6" />
-                      <span className="text-sm">Café Menu</span>
-                    </Button>
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-                      <MessageSquare className="h-6 w-6" />
-                      <span className="text-sm">Contact Support</span>
-                    </Button>
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-                      <FileText className="h-6 w-6" />
-                      <span className="text-sm">Download Invoice</span>
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             </div>
