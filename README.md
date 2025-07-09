@@ -41,7 +41,8 @@ A complete coworking space management application with user registration, paymen
 3. **Setup Database**
    - Go to your Supabase dashboard
    - Navigate to SQL Editor
-   - Copy and run the SQL from `supabase/migrations/001_initial_schema.sql`
+   - Copy and run the SQL from `supabase/migrations/001_initial_schema.sql` first
+   - Then run the SQL from `supabase/migrations/002_update_content.sql`
    - This will create all necessary tables, policies, and initial data
 
 4. **Create Storage Buckets**
@@ -49,16 +50,13 @@ A complete coworking space management application with user registration, paymen
    - Create two buckets:
      - `uploads` (for payment screenshots)
      - `id-documents` (for ID document uploads)
-   - Make both buckets public
+  - Set both buckets as public
+  - The migration will automatically create the necessary storage policies
 
 5. **Create Admin User**
-   - Sign up through the app with email: `admin@nerdshive.com`
-   - Go to Authentication in Supabase dashboard
-   - Find the user and copy their UUID
-   - Run this SQL to make them admin:
-     ```sql
-     UPDATE users SET role = 'admin', status = 'approved' WHERE id = 'user-uuid-here';
-     ```
+  - The migration includes sample users for testing
+  - For production, sign up with `admin@nerdshive.com` and update the user role in database
+  - Demo credentials are available in the sign-in modal
 
 6. **Start Development**
    ```bash
@@ -68,7 +66,6 @@ A complete coworking space management application with user registration, paymen
 ### Database Schema
 
 - **users**: User profiles and authentication data
-- **plans**: Membership plans (daily, weekly, monthly)
 - **payments**: Payment records and verification status
 - **join_requests**: User registration requests
 - **queries**: User questions and admin responses
@@ -76,51 +73,19 @@ A complete coworking space management application with user registration, paymen
 - **user_sessions**: Track workspace usage and hours
 
 ### API Endpoints
-
-All API calls are handled through Supabase client with Row Level Security (RLS) policies:
-
-- Authentication: Supabase Auth
-- Database: Supabase PostgreSQL with RLS
 - File Storage: Supabase Storage
 - Real-time: Supabase Realtime subscriptions
-
-## Project info
-
-**URL**: https://lovable.dev/projects/a44f7ba9-8e9d-446d-ac06-c4f9e414a605
-
 ## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
 Simply visit the [Lovable Project](https://lovable.dev/projects/a44f7ba9-8e9d-446d-ac06-c4f9e414a605) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 Follow these steps:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
 - Click the "Edit" button (pencil icon) at the top right of the file view.
